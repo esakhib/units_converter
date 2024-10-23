@@ -27,3 +27,4 @@ if a == 0:
 else:
     result = discriminant(a, b, c)
     print(f"Решение уравнения: {result}")
+

@@ -1,26 +1,29 @@
-import math
+import cmath
 
-import scipy
-from math import sqrt
-# put your python code here
-def discriminant(a, b, c):
-    # Вычисляем дискриминант
-    D = b ** 2 - 4 * a * c
-    # Проверяем, что дискриминант неотрицательный
+
+def discriminant(a: float, b: float, c: float) -> tuple[complex, complex] | float:
+    D = b ** 2 - 4 * a * c  # Вычисляем дискриминант
+
     if D < 0:
-        print(f"Корней нет, дискриминант меньше нуля: {D}")
+        # Используем cmath для вычисления комплексных корней
+        x1 = (-b + cmath.sqrt(D)) / (2 * a)
+        x2 = (-b - cmath.sqrt(D)) / (2 * a)
+        return x1, x2
     elif D == 0:
-        # Один корень
-        x = -b / (2 * a)
-        print(f"Один корень: x = {x}")
+        x = -b / (2 * a)  # Один корень
+        return x
     else:
-        # Два корня
-        x1 = (-b + math.sqrt(D)) / (2 * a)
-        x2 = (-b - math.sqrt(D)) / (2 * a)
-        print(f"Два корня: x1 = {x1}, x2 = {x2}")
+        x1 = (-b + cmath.sqrt(D)) / (2 * a)
+        x2 = (-b - cmath.sqrt(D)) / (2 * a)
+        return x1, x2  # Два корня
 
-a = int(input('Введите коэффициент а: '))
-b = int(input('Введите коэффициент b: '))
-c = int(input('Введите коэффициент c: '))
-result = discriminant(a, b, c)
-print(result)
+
+a = float(input("Введите коэффициент a: "))
+b = float(input("Введите коэффициент b: "))
+c = float(input("Введите коэффициент c: "))
+
+if a == 0:
+    print("Коэффициент 'a' не может быть равен нулю, так как это перестает быть квадратным уравнением.")
+else:
+    result = discriminant(a, b, c)
+    print(f"Решение уравнения: {result}")

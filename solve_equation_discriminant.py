@@ -1,7 +1,8 @@
-import cmath
+import numpy as np
+from numpy.polynomial import Polynomial as P
 
 
-def solve_equation_discriminant(a: float, b: float, c: float) -> tuple[complex, complex] | float:
+def solve_by_discriminant(a: float, b: float, c: float) -> tuple[np.complex128, np.complex128] | float:
     r"""Solve a quadratic equation and return its roots.
 
        This function calculates the roots of a quadratic equation given the coefficients
@@ -18,70 +19,52 @@ def solve_equation_discriminant(a: float, b: float, c: float) -> tuple[complex, 
 
        Returns
        -------
-       tuple[complex, complex] or float
+       tuple[np.complex128, np.complex128] or float
            Returns a tuple containing two roots when the discriminant is non-zero. If the
            discriminant is zero, returns a single real root as a float.
-       """
-    # Вычисляем дискриминант
-    D = b ** 2 - 4 * a * c
-    if D != 0:
-        # Используем cmath для вычисления комплексных корней
-        x1 = (-b + cmath.sqrt(D)) / (2 * a)
-        x2 = (-b - cmath.sqrt(D)) / (2 * a)
-        return x1, x2
-    else:
-        x = -b / (2 * a)  # Один корень
-        return x
-
-
-def check_root(a: float, b: float, c: float, roots: tuple | float) -> bool:
-    r"""Checks whether the found roots satisfy the quadratic equation.
-
-    This function evaluates the quadratic equation for each root and checks
-    if it is close to zero within a specified tolerance.
-
-    Parameters
-    ----------
-    a : float
-        The coefficient of \( x^2 \) in the quadratic equation.
-    b : float
-        The coefficient of \( x \) in the quadratic equation.
-    c : float
-        The constant term in the quadratic equation.
-    roots : tuple or float
-        A tuple containing the roots of the equation to be checked.
-        A float if there is only one root.
-
-    Returns
-    -------
-    bool
-        Returns `True` if all roots satisfy the equation within the specified
-        tolerance; otherwise, returns `False`.
     """
-    tolerance = 1e-10  # Допустимая погрешность
-    if isinstance(roots, float):  # Проверяем, является ли корень float
-        roots = (roots,)  # Преобразуем в кортеж
-    for x in roots:
-        if x is None:
-            continue
-        if abs(a * x ** 2 + b * x + c) >= tolerance:
-            return False
-    return True
+
+    # Создаем полином и вычисляем корни
+    p = P([c, b, a])
+    roots = p.roots()
+
+    # Проверяем, если два корня одинаковы, возвращаем только один корень
+    if len(roots) == 2 and np.isclose(roots[0], roots[1]):
+        return roots[0]  # Возвращаем только один корень
+
+    return roots  # Возвращаем все корни
 
 
+# Ввод коэффициентов
 try:
     a = float(input("Введите коэффициент a: "))
     b = float(input("Введите коэффициент b: "))
     c = float(input("Введите коэффициент c: "))
+
+    if a == 0:
+        print("Коэффициент 'a' не может быть равен нулю, так как уравнение перестает быть квадратным.")
+    else:
+        result = solve_by_discriminant(a, b, c)
+        print(f"Решение уравнения: {result}")
+
+    # Проверка корней
+    tolerance = 1e-10  # Погрешность
+    root_correct = True  # Флаг для отслеживания правильности корней
+
+    if isinstance(result, float):
+        roots = [result]  # Превращаем корень в список для удобства обработки
+    else:
+        roots = result
+
+    for x in roots:
+        if np.abs(a * x ** 2 + b * x + c) >= tolerance:
+            print(f"Ошибка: корень {x} не удовлетворяет уравнению.")
+            root_correct = False
+
+    if root_correct:
+        print(f'Корни прошли проверку и являются корректными с точностью до {tolerance}.')
+    else:
+        print(f"Некоторые корни не удовлетворяют исходному уравнению, учитывая погрешность {tolerance}.")
+
 except ValueError:
     print("Ошибка: необходимо вводить числовые значения.")
-else:
-    if a == 0:
-        print("Коэффициент 'a' не может быть равен нулю, так как это перестает быть квадратным уравнением.")
-    else:
-        result = solve_equation_discriminant(a, b, c)
-        print(f"Решение уравнения: {result}")
-if check_root(a, b, c, result):
-    print("Корни прошли проверку и являются корректными.")
-else:
-    print("Ошибка: найденные корни не удовлетворяют исходному уравнению.")

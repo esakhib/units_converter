@@ -68,3 +68,4 @@ for x in roots:
         root_correct = False
     else:
         print(f'Корень {x} прошел проверку и является корректным с точностью до {tolerance}.')
+

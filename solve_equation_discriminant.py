@@ -22,6 +22,7 @@ def solve_by_discriminant(a: float, b: float, c: float) -> tuple[np.complex128, 
        tuple[np.complex128, np.complex128] or float
            Returns a tuple containing two roots when the discriminant is non-zero. If the
            discriminant is zero, returns a single real root as a float.
+
     """
 
     # Создаем полином и вычисляем корни
@@ -36,35 +37,35 @@ def solve_by_discriminant(a: float, b: float, c: float) -> tuple[np.complex128, 
 
 
 # Ввод коэффициентов
-try:
-    a = float(input("Введите коэффициент a: "))
-    b = float(input("Введите коэффициент b: "))
-    c = float(input("Введите коэффициент c: "))
+while True:
+    try:
+        a = float(input("Введите коэффициент а: "))
+        if a == 0:
+            print("Коэффициент 'a' не может быть равен нулю, так как уравнение перестает быть квадратным.")
+            continue
 
-    if a == 0:
-        print("Коэффициент 'a' не может быть равен нулю, так как уравнение перестает быть квадратным.")
-    else:
+        b = float(input("Введите коэффициент b: "))
+        c = float(input("Введите коэффициент c: "))
+
         result = solve_by_discriminant(a, b, c)
         print(f"Решение уравнения: {result}")
 
-    # Проверка корней
-    tolerance = 1e-10  # Погрешность
-    root_correct = True  # Флаг для отслеживания правильности корней
+        break  # Выход из цикла, если ввод корректен
 
-    if isinstance(result, float):
-        roots = [result]  # Превращаем корень в список для удобства обработки
+    except ValueError:
+        print("Ошибка: необходимо вводить числовые значения.")
+
+# Проверка корней
+tolerance = 1e-10  # Погрешность
+root_correct = True  # Флаг для отслеживания правильности корней
+
+# Преобразуем результат в список для удобства обработки
+roots = [result] if isinstance(result, float) else result
+
+for x in roots:
+    if np.abs(a * x ** 2 + b * x + c) >= tolerance:
+        print(f"Ошибка: корень {x} не удовлетворяет уравнению.")
+        root_correct = False
     else:
-        roots = result
+        print(f'Корень {x} прошел проверку и является корректным с точностью до {tolerance}.')
 
-    for x in roots:
-        if np.abs(a * x ** 2 + b * x + c) >= tolerance:
-            print(f"Ошибка: корень {x} не удовлетворяет уравнению.")
-            root_correct = False
-
-    if root_correct:
-        print(f'Корни прошли проверку и являются корректными с точностью до {tolerance}.')
-    else:
-        print(f"Некоторые корни не удовлетворяют исходному уравнению, учитывая погрешность {tolerance}.")
-
-except ValueError:
-    print("Ошибка: необходимо вводить числовые значения.")

@@ -46,14 +46,13 @@ while True:
 
         b = float(input("Введите коэффициент b: "))
         c = float(input("Введите коэффициент c: "))
-
-        result = solve_by_discriminant(a, b, c)
-        print(f"Решение уравнения: {result}")
-
         break  # Выход из цикла, если ввод корректен
 
     except ValueError:
         print("Ошибка: необходимо вводить числовые значения.")
+
+result = solve_by_discriminant(a, b, c)
+print(f"Решение уравнения: {result}")
 
 # Проверка корней
 tolerance = 1e-10  # Погрешность

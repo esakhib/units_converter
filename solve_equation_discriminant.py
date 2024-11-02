@@ -1,5 +1,5 @@
 import numpy as np
-from numpy.polynomial import Polynomial as P
+from numpy.polynomial import Polynomial
 
 
 def solve_by_discriminant(a: float, b: float, c: float) -> tuple[np.complex128, np.complex128] | float:
@@ -26,7 +26,7 @@ def solve_by_discriminant(a: float, b: float, c: float) -> tuple[np.complex128, 
     """
 
     # Создаем полином и вычисляем корни
-    p = P([c, b, a])
+    p = Polynomial([c, b, a])
     roots = p.roots()
 
     # Проверяем, если два корня одинаковы, возвращаем только один корень

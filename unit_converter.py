@@ -1,159 +1,160 @@
 from enum import Enum
-from typing import Dict
 
 
-class Unit(Enum):
-    r"""Enum representing units of volume flow rate.
+class UnitPressure(Enum):
+    r"""Enum representing units of pressure.
 
-    This enumeration provides a list of units for volume flow rate measurements,
-    such as barrels per day and cubic meters per day. Each unit is associated
-    with an integer value for easy selection.
+        This enumeration provides a list of units for pressure measurements,
+        such as pascals, atmospheres, and bar. Each unit is associated with an
+        integer value for easy selection.
 
     Attributes
     ----------
-    bbl/b : int
+    PA : int
+        Pascal, the SI unit of pressure.
+    HPA : int
+        Hectopascal, equivalent to 100 pascals.
+    KPA : int
+        Kilopascal, equivalent to 1000 pascals.
+    MPA : int
+        Megapascal, equivalent to 1,000,000 pascals.
+    AT : int
+        Technical atmosphere.
+    ATM : int
+        Atmosphere, the unit of pressure based on the average atmospheric pressure at sea level.
+    BAR : int
+        Bar, a unit of pressure, defined as 100,000 pascals.
+    PSI : int
+        Pounds per square inch, commonly used in the United States for pressure measurements.
+
+    """
+    PA = 1
+    HPA = 2
+    KPA = 3
+    MPA = 4
+    AT = 5
+    ATM = 6
+    BAR = 7
+    PSI = 8
+
+
+class UnitVolumeFlowRate(Enum):
+    r"""Enum representing units of volume flow rate.
+
+        This enumeration provides a list of units for volume flow rate measurements,
+        such as barrels per day and cubic meters per day. Each unit is associated
+        with an integer value for easy selection.
+
+        Attributes
+        ----------
+    BBL_D : int
         Barrel per day.
-    mbbl_d : int
+    MBBL_D : int
         Thousand barrels per day.
-    mmbbl_d : int
+    MMBBL_D : int
         Million barrels per day.
-    bbl_y : int
+    BBL_Y : int
         Barrel per year.
-    mbbl_y : int
+    MBBL_Y : int
         Thousand barrels per year.
-    mmbbl_y : int
+    MMBBL_Y : int
         Million barrels per year.
-    m3_d : int
+    M3_D : int
         Cubic meter per day.
-    e3m3_d : int
+    E3M3_D : int
         Standard cubic foot per day.
-    e6m3_d : int
+    E6M3_D : int
         Million cubic meters per day.
-    scf_d : int
+    SCF_D : int
         Standard cubic foot per day.
-    mscf_d : int
+    MSCF_D : int
         Thousand standard cubic feet per day.
-    mmscf_d : int
+    MMSCF_D : int
         Million standard cubic feet per day.
+
     """
 
-    bbl_d = 1  # баррель в день
-    mbbl_d = 2  # тысяча баррелей в день
-    mmbbl_d = 3  # миллион баррелей в день
-    bbl_y = 4  # баррель в год
-    mbbl_y = 5  # тысяча баррелей в год
-    mmbbl_y = 6  # миллион баррелей в год
-    m3_d = 7  # кубометр в день
-    e3m3_d = 8  # стандартный кубический фут в день
-    e6m3_d = 9  # миллион кубических метров в сутки
-    scf_d = 10  # стандартный кубический фут в сутки
-    mscf_d = 11  # тысяча стандартных кубических футов в сутки
-    mmscg_d = 12  # миллион стандартных кубических футов в сутки
+    BBL_D = 1
+    MBBL_D = 2
+    MMBBL_D = 3
+    BBL_Y = 4
+    MBBL_Y = 5
+    MMBBL_Y = 6
+    M3_D = 7
+    E3M3_D = 8
+    E6M3_D = 9
+    SCF_D = 10
+    MSCF_D = 11
+    MMSCG_D = 12
 
 
 class UnitConverter:
-    r"""A converter for various units of volume flow rate.
+    r"""Converters for various units of volume flow rate and pressure.
 
-    This class provides a method for converting between different units of volume flow rate.
-    The conversion is based on pre-defined conversion factors that map each unit to barrels
-    per day (bbl/d), which acts as the base unit.
+    This module provides two separate converter classes: - `UnitConverter`: Converts between different units of
+    volume flow rate, such as barrels per day and cubic meters per day. - `UnitPAConverter`: Converts between
+    different units of pressure, such as pascals, atmospheres, and bars.
 
-    Attributes
-    ----------
-    conversion_factors : dict
-        A dictionary mapping each Unit to its conversion factor to barrels per day (bbl/d).
+    Both classes use pre-defined conversion factors, mapping each unit to a base unit for conversion.
+
+    Attributes ---------- UnitConverter: conversion_factors : dict A dictionary mapping each `Unit` to its conversion
+    factor to barrels per day (bbl/d), which acts as the base unit. UnitPAConverter: conversion_factors : dict A
+    dictionary mapping each `UnitPA` to its conversion factor to pascals (PA), which acts as the base unit.
 
     Methods
     -------
-    __init__(from_unit, to_unit, amount)
-        Initializes the converter with a source unit, target unit, and quantity to convert.
-    convert()
-        Performs the conversion from the source unit to the target unit.
+    UnitConverter:
+        __init__(from_unit, to_unit, amount)
+            Initializes the converter with a source unit, target unit, and quantity to convert.
+        convert()
+            Performs the conversion from the source unit to the target unit.
+
+    UnitPAConverter:
+        __init__(from_unit, to_unit, amount)
+            Initializes the converter with a source pressure unit, target pressure unit, and quantity to convert.
+        convert()
+            Performs the conversion from the source pressure unit to the target pressure unit.
 
     """
 
-    # Коэффициенты перевода к баррелю в день (bbl/d)
-    conversion_factors: Dict[Unit, float] = {
-        Unit.bbl_d: 1,
-        Unit.mbbl_d: 999.9999999999999,
-        Unit.mmbbl_d: 999999.9999999999,
-        Unit.bbl_y: 0.0027379093109240003,
-        Unit.mbbl_y: 2.737909310924,
-        Unit.mmbbl_y: 2737.9093109240002,
-        Unit.m3_d: 6.289810770432104,
-        Unit.e3m3_d: 6289.810770432104,
-        Unit.e6m3_d: 6289810.770432104,
-        Unit.scf_d: 0.17810760667903522,
-        Unit.mscf_d: 178.10760667903523,
-        Unit.mmscg_d: 178107.60667903523
+    conversion_factors: dict[UnitVolumeFlowRate, float] = {
+        UnitVolumeFlowRate.BBL_D: 1,
+        UnitVolumeFlowRate.MBBL_D: 999.9999999999999,
+        UnitVolumeFlowRate.MMBBL_D: 999999.9999999999,
+        UnitVolumeFlowRate.BBL_Y: 0.0027379093109240003,
+        UnitVolumeFlowRate.MBBL_Y: 2.737909310924,
+        UnitVolumeFlowRate.MMBBL_Y: 2737.9093109240002,
+        UnitVolumeFlowRate.M3_D: 6.289810770432104,
+        UnitVolumeFlowRate.E3M3_D: 6289.810770432104,
+        UnitVolumeFlowRate.E6M3_D: 6289810.770432104,
+        UnitVolumeFlowRate.SCF_D: 0.17810760667903522,
+        UnitVolumeFlowRate.MSCF_D: 178.10760667903523,
+        UnitVolumeFlowRate.MMSCG_D: 178107.60667903523
     }
 
-    def __init__(self, from_unit: Unit, to_unit: Unit, amount: float) -> None:
-        r"""Initialize the UnitConverter with source and target units and the quantity to convert.
-
-        Parameters
-        ----------
-        from_unit : Unit
-            The source unit to convert from.
-        to_unit : Unit
-            The target unit to convert to.
-        amount : float
-            The quantity in the source unit to convert.
-
-        """
-        self.from_unit = from_unit
-        self.to_unit = to_unit
-        self.amount = amount
-
-    def convert_unit(self) -> float:
-        r"""Convert the quantity from the source unit to the target unit.
-
-        This method first converts the given quantity to barrels per day (bbl/d) and then
-        converts that intermediate value to the target unit.
-
-        Returns
-        -------
-        float
-            The converted quantity in the target unit.
-
-        """
-
-        # Перевод количества в баррели в день
-        amount_in_bbl_per_day = self.amount * self.conversion_factors[self.from_unit]
-
-        # Перевод из баррелей в день в целевую единицу
-        converted_amount = amount_in_bbl_per_day / self.conversion_factors[self.to_unit]
-        return converted_amount
+    @classmethod
+    def convert_unit(cls, from_unit: UnitVolumeFlowRate, to_unit: UnitVolumeFlowRate, value: float) -> float:
+        value_in_bbl_per_day = value * cls.conversion_factors[from_unit]
+        return value_in_bbl_per_day / cls.conversion_factors[to_unit]
 
 
-def main():
-    while True:
-        print("Выберите единицы измерения:")
-        for unit in Unit:
-            print(f"{unit.value}.{unit.name.replace('_',' ')}")
+class UnitPAConverter:
+    conversion_factors: dict[UnitPressure, float] = {
+        UnitPressure.PA: 1,
+        UnitPressure.HPA: 100,
+        UnitPressure.KPA: 1000,
+        UnitPressure.MPA: 1_000_000,
+        UnitPressure.AT: 98066.5,
+        UnitPressure.ATM: 101325,
+        UnitPressure.BAR: 100000,
+        UnitPressure.PSI: 6894.76
+    }
 
-        try:
-            from_unit = int(input("Введите номер исходной единицы: "))
-            if from_unit < 1 or from_unit > len(Unit):
-                print("Выберите номер из предложенных единиц.")
-                continue
-            from_unit = Unit(from_unit)
+    @classmethod
+    def convert_unit(cls, from_unit: UnitPressure, to_unit: UnitPressure, value: float) -> float:
+        value_in_pa = value * cls.conversion_factors[from_unit]
+        return value_in_pa / cls.conversion_factors[to_unit]
 
-            to_unit = int(input("Введите номер целевой единицы: "))
-            if to_unit < 1 or to_unit > len(Unit):
-                print("Выберите номер из предложенных единиц.")
-                continue
-            to_unit = Unit(to_unit)
 
-            amount = float(input("Введите количество: "))
-            if amount < 0:
-                print("Количество не может быть отрицательным.")
-                continue
-            converter = UnitConverter(from_unit, to_unit, amount)
-            result = converter.convert_unit()
-            print(f"{amount} {from_unit.name} = {result} {to_unit.name}")
-            break
-        except ValueError:
-            print("Пожалуйста, введите корректное значение.")
-
-main()
+def output_result(from_unit: Enum, to_unit: Enum, quantity: float, result: float) -> None:
+    print(f"{quantity} {from_unit.name} = {result} {to_unit.name}")

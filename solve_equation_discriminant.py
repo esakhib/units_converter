@@ -27,14 +27,16 @@ def solve_by_discriminant(a: float, b: float, c: float) -> tuple[np.complex128, 
 
     # Создаем полином и вычисляем корни
     p = Polynomial([c, b, a])
-    roots = p.roots()
+    decision = p.roots()
 
     # Проверяем, если два корня одинаковы, возвращаем только один корень
-    if len(roots) == 2 and np.isclose(roots[0], roots[1]):
-        return roots[0]  # Возвращаем только один корень
+    if len(decision) == 2 and np.isclose(decision[0], decision[1]):
+        return decision[0]  # Возвращаем только один корень
 
-    return roots  # Возвращаем все корни
+    return decision  # Возвращаем все корни
 
+
+a, b, c = None, None, None
 
 # Ввод коэффициентов
 while True:

@@ -58,7 +58,7 @@ print(f"Решение уравнения: {result}")
 
 # Проверка корней
 tolerance = 1e-10  # Погрешность
-root_correct = True  # Флаг для отслеживания правильности корней
+
 
 # Преобразуем результат в список для удобства обработки
 roots = [result] if isinstance(result, float) else result
@@ -66,6 +66,5 @@ roots = [result] if isinstance(result, float) else result
 for x in roots:
     if np.abs(a * x ** 2 + b * x + c) >= tolerance:
         print(f"Ошибка: корень {x} не удовлетворяет уравнению.")
-        root_correct = False
     else:
         print(f'Корень {x} прошел проверку и является корректным с точностью до {tolerance}.')

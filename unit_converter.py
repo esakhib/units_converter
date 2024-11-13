@@ -1,12 +1,14 @@
 from enum import Enum
+from typing import Iterable
+import numpy as np
 
 
-class UnitPressure(Enum):
-    r"""Enum representing units of pressure.
+class Unit(Enum):
+    r"""Enum representing units for pressure and volume flow rate measurements.
 
-        This enumeration provides a list of units for pressure measurements,
-        such as pascals, atmospheres, and bar. Each unit is associated with an
-        integer value for easy selection.
+    This enumeration provides a list of units for both pressure and volume flow rate
+    measurements, covering a range of commonly used units such as pascals, barrels per day,
+    and standard cubic feet per day. Each unit is associated with an integer value for easy selection.
 
     Attributes
     ----------
@@ -27,26 +29,6 @@ class UnitPressure(Enum):
     PSI : int
         Pounds per square inch, commonly used in the United States for pressure measurements.
 
-    """
-    PA = 1
-    HPA = 2
-    KPA = 3
-    MPA = 4
-    AT = 5
-    ATM = 6
-    BAR = 7
-    PSI = 8
-
-
-class UnitVolumeFlowRate(Enum):
-    r"""Enum representing units of volume flow rate.
-
-        This enumeration provides a list of units for volume flow rate measurements,
-        such as barrels per day and cubic meters per day. Each unit is associated
-        with an integer value for easy selection.
-
-        Attributes
-        ----------
     BBL_D : int
         Barrel per day.
     MBBL_D : int
@@ -74,87 +56,100 @@ class UnitVolumeFlowRate(Enum):
 
     """
 
-    BBL_D = 1
-    MBBL_D = 2
-    MMBBL_D = 3
-    BBL_Y = 4
-    MBBL_Y = 5
-    MMBBL_Y = 6
-    M3_D = 7
-    E3M3_D = 8
-    E6M3_D = 9
-    SCF_D = 10
-    MSCF_D = 11
-    MMSCG_D = 12
+    PA = 1
+    HPA = 2
+    KPA = 3
+    MPA = 4
+    AT = 5
+    ATM = 6
+    BAR = 7
+    PSI = 8
+
+    BBL_D = 9
+    MBBL_D = 10
+    MMBBL_D = 11
+    BBL_Y = 12
+    MBBL_Y = 13
+    MMBBL_Y = 14
+    M3_D = 15
+    E3M3_D = 16
+    E6M3_D = 17
+    SCF_D = 18
+    MSCF_D = 19
+    MMSCF_D = 20
+
+
+conversion_factors = {
+    'pressure': {
+        Unit.PA: 1,
+        Unit.HPA: 100,
+        Unit.KPA: 1000,
+        Unit.MPA: 1_000_000,
+        Unit.AT: 98066.5,
+        Unit.ATM: 101325,
+        Unit.BAR: 1_000_00,
+        Unit.PSI: 6894.76
+    },
+    'volume_flow_rate': {
+        Unit.BBL_D: 1,
+        Unit.MBBL_D: 999.9999999999999,
+        Unit.MMBBL_D: 999999.9999999999,
+        Unit.BBL_Y: 0.0027379093109240003,
+        Unit.MBBL_Y: 2.737909310924,
+        Unit.MMBBL_Y: 2737.9093109240002,
+        Unit.M3_D: 6.289810770432104,
+        Unit.E3M3_D: 6289.810770432104,
+        Unit.E6M3_D: 6289810.770432104,
+        Unit.SCF_D: 0.17810760667903522,
+        Unit.MSCF_D: 178.10760667903523,
+        Unit.MMSCF_D: 178107.60667903523
+    }
+}
 
 
 class UnitConverter:
-    r"""Converters for various units of volume flow rate and pressure.
-
-    This module provides two separate converter classes: - `UnitConverter`: Converts between different units of
-    volume flow rate, such as barrels per day and cubic meters per day. - `UnitPAConverter`: Converts between
-    different units of pressure, such as pascals, atmospheres, and bars.
-
-    Both classes use pre-defined conversion factors, mapping each unit to a base unit for conversion.
-
-    Attributes ---------- UnitConverter: conversion_factors : dict A dictionary mapping each `Unit` to its conversion
-    factor to barrels per day (bbl/d), which acts as the base unit. UnitPAConverter: conversion_factors : dict A
-    dictionary mapping each `UnitPA` to its conversion factor to pascals (PA), which acts as the base unit.
-
-    Methods
-    -------
-    UnitConverter:
-        __init__(from_unit, to_unit, amount)
-            Initializes the converter with a source unit, target unit, and quantity to convert.
-        convert()
-            Performs the conversion from the source unit to the target unit.
-
-    UnitPAConverter:
-        __init__(from_unit, to_unit, amount)
-            Initializes the converter with a source pressure unit, target pressure unit, and quantity to convert.
-        convert()
-            Performs the conversion from the source pressure unit to the target pressure unit.
-
-    """
-
-    conversion_factors: dict[UnitVolumeFlowRate, float] = {
-        UnitVolumeFlowRate.BBL_D: 1,
-        UnitVolumeFlowRate.MBBL_D: 999.9999999999999,
-        UnitVolumeFlowRate.MMBBL_D: 999999.9999999999,
-        UnitVolumeFlowRate.BBL_Y: 0.0027379093109240003,
-        UnitVolumeFlowRate.MBBL_Y: 2.737909310924,
-        UnitVolumeFlowRate.MMBBL_Y: 2737.9093109240002,
-        UnitVolumeFlowRate.M3_D: 6.289810770432104,
-        UnitVolumeFlowRate.E3M3_D: 6289.810770432104,
-        UnitVolumeFlowRate.E6M3_D: 6289810.770432104,
-        UnitVolumeFlowRate.SCF_D: 0.17810760667903522,
-        UnitVolumeFlowRate.MSCF_D: 178.10760667903523,
-        UnitVolumeFlowRate.MMSCG_D: 178107.60667903523
-    }
 
     @classmethod
-    def convert_unit(cls, from_unit: UnitVolumeFlowRate, to_unit: UnitVolumeFlowRate, value: float) -> float:
-        value_in_bbl_per_day = value * cls.conversion_factors[from_unit]
-        return value_in_bbl_per_day / cls.conversion_factors[to_unit]
+    def convert_unit(cls, category: str, from_unit: Unit, to_unit: Unit,
+                     value: [float | Iterable[float]]) -> [float | np.ndarray]:
+        """
+        Convert from one unit to another within a specified category (e.g., pressure or volume flow rate).
+
+        Parameters
+        ----------
+        category : str
+            The unit category ('pressure' or 'volume_flow_rate').
+        from_unit : Unit
+            The source unit within the category.
+        to_unit : Unit
+            The target unit within the category.
+        value : [float, Iterable[float]]
+            The value(s) to be converted (can be a single value or an iterable).
+
+        Returns
+        -------
+        [float, np.ndarray]
+            The converted value(s).
+
+        """
+
+        factors = conversion_factors[category]
+
+        if isinstance(value, Iterable):
+            values = np.array(value)
+            factor_from = factors[from_unit]
+            factor_to = factors[to_unit]
+            return (values * factor_from) / factor_to
+        else:
+            factor_from = factors[from_unit]
+            factor_to = factors[to_unit]
+            return (value * factor_from) / factor_to
 
 
-class UnitPAConverter:
-    conversion_factors: dict[UnitPressure, float] = {
-        UnitPressure.PA: 1,
-        UnitPressure.HPA: 100,
-        UnitPressure.KPA: 1000,
-        UnitPressure.MPA: 1_000_000,
-        UnitPressure.AT: 98066.5,
-        UnitPressure.ATM: 101325,
-        UnitPressure.BAR: 100000,
-        UnitPressure.PSI: 6894.76
-    }
-
-    @classmethod
-    def convert_unit(cls, from_unit: UnitPressure, to_unit: UnitPressure, value: float) -> float:
-        value_in_pa = value * cls.conversion_factors[from_unit]
-        return value_in_pa / cls.conversion_factors[to_unit]
-
-
-def output_result(from_unit: Enum, to_unit: Enum, quantity: float, result: float) -> None:
-    print(f"{quantity} {from_unit.name} = {result} {to_unit.name}")
+def output_result(from_unit: Unit, to_unit: Unit, quantity: [float | Iterable[float]],
+                  result: [float | np.ndarray]) -> None:
+    if isinstance(quantity, Iterable):
+        for q, r in zip(quantity, result):
+            print(f"{q} {from_unit.name} = {r} {to_unit.name}")
+    else:
+        print(f"{quantity} {from_unit.name} = {result} {to_unit.name}")

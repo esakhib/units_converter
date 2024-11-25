@@ -1,53 +1,52 @@
-from unit_converter import Unit, UnitConverter, output_result
+import inspect
+from unit_converter import UnitConverter, Pressure, VolumeFlowRate, UnitCategory, output_result
 
 
 def main():
-    source_unit = None
-    target_unit = None
-    quantity = None
+    categories = [cls for _, cls in inspect.getmembers(__import__(__name__), inspect.isclass)
+                  if issubclass(cls, UnitCategory) and cls is not UnitCategory]
 
+    # Выбор категории
     while True:
+        source_unit = None
+        target_unit = None
+        quantity = None
+
         print("Выберите категорию единиц измерения:")
-        print("1. Pressure")
-        print("2. Volume Flow Rate")
+        for i, category in enumerate(categories, start=1):
+            print(f"{i}. {category.__name__}")
 
         try:
             category_choice = int(input("Введите номер категории: "))
-            if category_choice == 1:
-                selected_category = 'pressure'
-                break
-            elif category_choice == 2:
-                selected_category = 'volume_flow_rate'
+            if 1 <= category_choice <= len(categories):
+                selected_category = categories[category_choice - 1]
                 break
             else:
                 print("Выберите правильную категорию.")
         except ValueError:
             print("Пожалуйста, введите корректное значение.")
 
-    print(f"Вы выбрали категорию: {selected_category}")
+    print(f"Вы выбрали категорию: {selected_category.__name__}")
 
     while True:
         print("Выберите единицу измерения:")
-        if selected_category == 'pressure':
-            selected_unit_class = [unit for unit in Unit if unit.value <= 8]
-        else:
-            selected_unit_class = [unit for unit in Unit if unit.value >= 9]
+        units = selected_category.get_units()
 
-        for i, unit in enumerate(selected_unit_class, start=1):
-            print(f"{i}. {unit.name.replace('_', '/')}")
+        for i, unit in enumerate(units, start=1):
+            print(f"{i}. {unit.symbol}")
 
         try:
             from_unit_value = int(input("Введите номер исходной единицы: "))
-            if from_unit_value < 1 or from_unit_value > len(selected_unit_class):
+            if from_unit_value < 1 or from_unit_value > len(units):
                 print("Выберите номер из предложенных единиц.")
                 continue
-            source_unit = selected_unit_class[from_unit_value - 1]
+            source_unit = units[from_unit_value - 1]
 
             to_unit_value = int(input("Введите номер целевой единицы: "))
-            if to_unit_value < 1 or to_unit_value > len(selected_unit_class):
+            if to_unit_value < 1 or to_unit_value > len(units):
                 print("Выберите номер из предложенных единиц.")
                 continue
-            target_unit = selected_unit_class[to_unit_value - 1]
+            target_unit = units[to_unit_value - 1]
 
             user_input = input("Введите количество (или несколько значений через пробел): ")
             values = list(map(float, user_input.split()))
@@ -61,9 +60,9 @@ def main():
         except ValueError:
             print("Пожалуйста, введите корректное значение.")
 
-    result = UnitConverter.convert_unit(selected_category, source_unit, target_unit, quantity)
-
+    result = UnitConverter.convert_unit(source_unit, target_unit, quantity)
     output_result(source_unit, target_unit, quantity, result)
 
 
-main()
+if __name__ == "__main__":
+    main()

@@ -1,155 +1,176 @@
-from enum import Enum
+from dataclasses import dataclass
 from typing import Iterable
 import numpy as np
 
 
-class Unit(Enum):
-    r"""Enum representing units for pressure and volume flow rate measurements.
-
-    This enumeration provides a list of units for both pressure and volume flow rate
-    measurements, covering a range of commonly used units such as pascals, barrels per day,
-    and standard cubic feet per day. Each unit is associated with an integer value for easy selection.
+@dataclass
+class UnitEnum:
+    r"""
+    A base class for defining individual measurement units.
 
     Attributes
     ----------
-    PA : int
-        Pascal, the SI unit of pressure.
-    HPA : int
-        Hectopascal, equivalent to 100 pascals.
-    KPA : int
-        Kilopascal, equivalent to 1000 pascals.
-    MPA : int
-        Megapascal, equivalent to 1,000,000 pascals.
-    AT : int
-        Technical atmosphere.
-    ATM : int
-        Atmosphere, the unit of pressure based on the average atmospheric pressure at sea level.
-    BAR : int
-        Bar, a unit of pressure, defined as 100,000 pascals.
-    PSI : int
-        Pounds per square inch, commonly used in the United States for pressure measurements.
+    factor : float
+        The conversion factor for the unit relative to the base unit.
+    symbol : str
+        A textual representation of the unit.
 
-    BBL_D : int
-        Barrel per day.
-    MBBL_D : int
+    """
+
+    factor: float
+    symbol: str
+
+
+class UnitCategory:
+    r"""
+    A base class for organizing categories of measurement units.
+
+    This class serves as a foundation for defining specific categories of units
+    such as pressure or volume flow rate. It provides methods to retrieve
+    all units defined in a category.
+
+    """
+
+    @classmethod
+    def get_units(cls):
+        return [attr for attr in cls.__dict__.values() if isinstance(attr, UnitEnum)]
+
+
+class Pressure(UnitCategory):
+    r"""
+    A unit category representing pressure measurements.
+
+    This category includes common units of pressure and their conversion factors
+    relative to the base unit (Pascal). Examples include atmospheric pressure, bar, and psi.
+
+    Attributes
+    ----------
+    PA : UnitEnum
+        Pascal, the SI base unit of pressure.
+    HPA : UnitEnum
+        Hectopascal, equivalent to 100 pascals.
+    KPA : UnitEnum
+        Kilopascal, equivalent to 1,000 pascals.
+    MPA : UnitEnum
+        Megapascal, equivalent to 1,000,000 pascals.
+    AT : UnitEnum
+        Technical atmosphere, used in engineering.
+    ATM : UnitEnum
+        Standard atmosphere, based on average sea-level pressure.
+    BAR : UnitEnum
+        Bar, equivalent to 100,000 pascals.
+    PSI : UnitEnum
+        Pounds per square inch, commonly used in the US.
+
+    """
+
+    PA = UnitEnum(1, "Pa: pascal")
+    HPA = UnitEnum(100, "hPa: hectopascal")
+    KPA = UnitEnum(1000, "kPa: kilopascal")
+    MPA = UnitEnum(1000000, "MPa: megapascal")
+    AT = UnitEnum(98066.5, "at: technical atmosphere")
+    ATM = UnitEnum(101325, "atm: standard atmosphere")
+    BAR = UnitEnum(100000, "bar: bar")
+    PSI = UnitEnum(6894.76, "psi: pound-force per square inch")
+
+
+class VolumeFlowRate(UnitCategory):
+    r"""
+    A unit category representing volume flow rate measurements.
+
+    This category defines commonly used units for flow rate, including barrels per day
+    and standard cubic feet per day, along with their conversion factors.
+
+    Attributes
+    ----------
+    BBL_D : UnitEnum
+        Barrel per day, a common unit in oil production.
+    MBBL_D : UnitEnum
         Thousand barrels per day.
-    MMBBL_D : int
+    MMBBL_D : UnitEnum
         Million barrels per day.
-    BBL_Y : int
+    BBL_Y : UnitEnum
         Barrel per year.
-    MBBL_Y : int
+    MBBL_Y : UnitEnum
         Thousand barrels per year.
-    MMBBL_Y : int
+    MMBBL_Y : UnitEnum
         Million barrels per year.
-    M3_D : int
+    M3_D : UnitEnum
         Cubic meter per day.
-    E3M3_D : int
-        Standard cubic foot per day.
-    E6M3_D : int
+    E3M3_D : UnitEnum
+        Thousand cubic meters per day.
+    E6M3_D : UnitEnum
         Million cubic meters per day.
-    SCF_D : int
-        Standard cubic foot per day.
-    MSCF_D : int
+    SCF_D : UnitEnum
+        Standard cubic feet per day.
+    MSCF_D : UnitEnum
         Thousand standard cubic feet per day.
-    MMSCF_D : int
+    MMSCF_D : UnitEnum
         Million standard cubic feet per day.
 
     """
 
-    PA = 1
-    HPA = 2
-    KPA = 3
-    MPA = 4
-    AT = 5
-    ATM = 6
-    BAR = 7
-    PSI = 8
-
-    BBL_D = 9
-    MBBL_D = 10
-    MMBBL_D = 11
-    BBL_Y = 12
-    MBBL_Y = 13
-    MMBBL_Y = 14
-    M3_D = 15
-    E3M3_D = 16
-    E6M3_D = 17
-    SCF_D = 18
-    MSCF_D = 19
-    MMSCF_D = 20
-
-
-conversion_factors = {
-    'pressure': {
-        Unit.PA: 1,
-        Unit.HPA: 100,
-        Unit.KPA: 1000,
-        Unit.MPA: 1_000_000,
-        Unit.AT: 98066.5,
-        Unit.ATM: 101325,
-        Unit.BAR: 1_000_00,
-        Unit.PSI: 6894.76
-    },
-    'volume_flow_rate': {
-        Unit.BBL_D: 1,
-        Unit.MBBL_D: 999.9999999999999,
-        Unit.MMBBL_D: 999999.9999999999,
-        Unit.BBL_Y: 0.0027379093109240003,
-        Unit.MBBL_Y: 2.737909310924,
-        Unit.MMBBL_Y: 2737.9093109240002,
-        Unit.M3_D: 6.289810770432104,
-        Unit.E3M3_D: 6289.810770432104,
-        Unit.E6M3_D: 6289810.770432104,
-        Unit.SCF_D: 0.17810760667903522,
-        Unit.MSCF_D: 178.10760667903523,
-        Unit.MMSCF_D: 178107.60667903523
-    }
-}
+    BBL_D = UnitEnum(1, "bbl/d: barrel per day")
+    MBBL_D = UnitEnum(1000, "mbbl/d: thousand barrels per day")
+    MMBBL_D = UnitEnum(1000000, "mmbbl/d: million barrels per day")
+    BBL_Y = UnitEnum(0.00273791, "bbl/y: barrels per year")
+    MBBL_Y = UnitEnum(2.73791, "mbbl/y: thousand barrels per year")
+    MMBBL_Y = UnitEnum(2737.91, "mmbbl/y: million barrels per year")
+    M3_D = UnitEnum(6.28981, "m³/d: cubic meter per day")
+    E3M3_D = UnitEnum(6289.81, "E3m³/d: thousand cubic meter per day")
+    E6M3_D = UnitEnum(6289810.77, "E6m³/d: million cubic meter per day")
+    SCF_D = UnitEnum(0.1781, "scf/d: standard cubic feet per day")
+    MSCF_D = UnitEnum(178.1, "mscf/d: thousand standard cubic feet per day")
+    MMSCF_D = UnitEnum(178107.6, "mmscf/d: million standard cubic feet per day")
 
 
 class UnitConverter:
-
-    @classmethod
-    def convert_unit(cls, category: str, from_unit: Unit, to_unit: Unit,
-                     value: [float | Iterable[float]]) -> [float | np.ndarray]:
+    @staticmethod
+    def convert_unit(from_unit: UnitEnum, to_unit: UnitEnum, value: [float | Iterable[float]]) -> [float | np.ndarray]:
         """
-        Convert from one unit to another within a specified category (e.g., pressure or volume flow rate).
+        Convert from one unit to another within a specified category.
 
         Parameters
         ----------
-        category : str
-            The unit category ('pressure' or 'volume_flow_rate').
-        from_unit : Unit
-            The source unit within the category.
-        to_unit : Unit
-            The target unit within the category.
-        value : [float, Iterable[float]]
-            The value(s) to be converted (can be a single value or an iterable).
+        from_unit : UnitEnum
+            The source unit.
+        to_unit : UnitEnum
+            The target unit.
+        value : float | Iterable[float]
+            The value(s) to be converted.
 
         Returns
         -------
-        [float, np.ndarray]
-            The converted value(s).
+        float | np.ndarray
+            The converted value.
 
         """
 
-        factors = conversion_factors[category]
-
-        if isinstance(value, Iterable):
-            values = np.array(value)
-            factor_from = factors[from_unit]
-            factor_to = factors[to_unit]
-            return (values * factor_from) / factor_to
-        else:
-            factor_from = factors[from_unit]
-            factor_to = factors[to_unit]
-            return (value * factor_from) / factor_to
+        if isinstance(value, Iterable) and not isinstance(value, (str, bytes)):
+            value = np.array(value)
+        return value * (from_unit.factor / to_unit.factor)
 
 
-def output_result(from_unit: Unit, to_unit: Unit, quantity: [float | Iterable[float]],
+def output_result(from_unit: UnitEnum, to_unit: UnitEnum, quantity: [float | Iterable[float]],
                   result: [float | np.ndarray]) -> None:
+    """
+    Outputs the results of unit conversion.
+
+    Parameters
+    ----------
+    from_unit : UnitEnum
+        The unit being converted from.
+    to_unit : UnitEnum
+        The unit being converted to.
+    quantity : float | Iterable[float]
+        The original quantity in the source unit.
+    result : float | np.ndarray
+        The converted quantity in the target unit.
+
+    """
+
     if isinstance(quantity, Iterable):
         for q, r in zip(quantity, result):
-            print(f"{q} {from_unit.name} = {r} {to_unit.name}")
+            print(f"{q} {from_unit.symbol} = {r} {to_unit.symbol}")
     else:
-        print(f"{quantity} {from_unit.name} = {result} {to_unit.name}")
+        print(f"{quantity} {from_unit.symbol} = {result} {to_unit.symbol}")

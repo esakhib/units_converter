@@ -19,6 +19,7 @@ class UnitData:
 
     factor: float
     symbol: str
+    offset: float = 0.0
 
 
 class UnitCategory:
@@ -325,6 +326,12 @@ class VelocityCategory(UnitCategory):
     MI_H = UnitData(1609.344 / 3600, "mi/h")
     KNOT = UnitData(0.514444, "knot")
 
+class TemperatureCategory(UnitCategory):
+    degK = UnitData(factor=1.0, offset=0.0, symbol="degK")
+    degC = UnitData(factor=1.0, offset=273.15, symbol="degC")
+    degF = UnitData(factor=5/9, offset=459.67, symbol="degF")
+    degR = UnitData(factor=5/9, offset=0.0, symbol="degR")
+
 class TemperatureIntervalCategory(UnitCategory):
     deltaK = UnitData(1.0, "deltaK")
     deltaC = UnitData(1.0, "deltaC")
@@ -439,9 +446,14 @@ class UnitConverter:
 
         """
 
-        if isinstance(value, Iterable) and not isinstance(value, (str, bytes)):
-            value = np.array(value)
-        return value * (from_unit.factor / to_unit.factor)
+        is_seq = isinstance(value, Iterable) and not isinstance(value, (str, bytes))
+        v = np.array(value) if is_seq else value
+
+        if from_unit.offset or to_unit.offset:
+            kelvin = (v+from_unit.offset)*from_unit.factor
+            return kelvin/to_unit.factor -to_unit.offset
+
+        return v*(from_unit.factor/to_unit.factor)
 
 
 def output_result(from_unit: UnitData, to_unit: UnitData, values: float | Iterable[float], result: float | np.ndarray) -> None:

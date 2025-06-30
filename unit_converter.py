@@ -167,6 +167,164 @@ class CompressibilityCategory(UnitCategory):
     PER_PA = UnitData(1.0, "1/Pa")
     PER_BAR = UnitData(1.0 / 100000, "1/bar")
 
+class KinematicViscosityCategory(UnitCategory):
+    """
+    Units that describes kinematic viscosity
+    """
+
+    M2_S = UnitData(1.0, "m2/s")
+    ST = UnitData(1e-4, "St")
+    CST = UnitData(1e-6, "cSt")
+
+class DynamicViscosityCategory(UnitCategory):
+    """
+    Units that describes dynamic viscosity
+    """
+
+    PA_S = UnitData(1.0, "Pa·s")
+    P = UnitData(0.1, "P")
+    CP = UnitData(0.001, "cP")
+class DensityCategory(UnitCategory):
+    """
+    Units related to density
+    """
+    KG_M3 = UnitData(1.0, "kg/m3")
+    G_CM3 = UnitData(1000.0, "g/cm3")
+    LBM_FT3 = UnitData(16.018463, "lbm/ft3")
+
+class LengthCategory(UnitCategory):
+    """
+    Units related to length
+    """
+
+    KG_M3 = UnitData(1.0, "kg/m3")
+    G_CM3 = UnitData(1000.0, "g/cm3")
+    LBM_FT3 = UnitData(16.018463, "lbm/ft3")
+
+class AreaCategory(UnitCategory):
+    """
+    Units related to area
+    """
+    M2 = UnitData(1.0, "m2")
+    KM2 = UnitData(1e6, "km2")
+    DM2 = UnitData(0.01, "dm2")
+    CM2 = UnitData(0.0001, "cm2")
+    MM2 = UnitData(1e-6, "mm2")
+    MI2 = UnitData(2589988.110336, "mi2")
+    YD2 = UnitData(0.83612736, "yd2")
+    FT2 = UnitData(0.09290304, "ft2")
+    IN2 = UnitData(0.00064516, "in2")
+    HA = UnitData(1e4, "ha")
+    ACRE = UnitData(4046.8564224, "acre")
+    ARE = UnitData(100.0, "are")
+
+
+class ForceCategory(UnitCategory):
+    """
+    Units related to force
+    """
+    N = UnitData(1.0, "N")
+    DYNE = UnitData(1e-5, "dyne")
+    LBF = UnitData(4.448221615, "lbf")
+
+class VolumeCategory(UnitCategory):
+    """
+    Units related to volume
+    """
+    bbl = UnitData(0.158987294928, "bbl")
+    mbbl = UnitData(158.987294928, "mbbl")
+    mmbbl = UnitData(158987.294928, "mmbbl")
+    ft3 = UnitData(0.028316846592, "ft3")
+    scf = UnitData(0.028316846592, "scf")
+    mscf = UnitData(28.316846592, "mscf")
+    mmscf = UnitData(28316.846592, "mmscf")
+    bcf = UnitData(28316846.592, "bcf")
+    m3 = UnitData(1.0, "m3")
+    E3m3 = UnitData(1000.0, "E3m3")
+    E6m3 = UnitData(1000000.0, "E6m3")
+    km3 = UnitData(1000000000.0, "km3")
+    dm3 = UnitData(0.001, "dm3")
+    cm3 = UnitData(0.000001, "cm3")
+    mm3 = UnitData(1e-9, "mm3")
+    mi3 = UnitData(4168181825.44058, "mi3")
+    yd3 = UnitData(0.764554857984, "yd3")
+    in3 = UnitData(1.6387064e-05, "in3")
+    l = UnitData(0.001, "l")
+    ml = UnitData(1e-6, "ml")
+    gal = UnitData(0.003785411784, "gal")
+    acre_ft = UnitData(1233.48183754752, "acre.ft")
+
+class MassCategory(UnitCategory):
+    KG = UnitData(1.0, "kg")
+    G = UnitData(0.001, "g")
+    MG = UnitData(1e-6, "mg")
+    T = UnitData(1000.0, "t")
+    ST = UnitData(6.35029318, "st")
+    LBM = UnitData(0.45359237, "lbm")
+    OZM = UnitData(0.028349523125, "ozm")
+    OZM_TROY = UnitData(0.0311034768, "ozm[troy]")
+    TON_UK = UnitData(1016.0469088, "ton[UK]")
+    TON_US = UnitData(907.18474, "ton[US]")
+    TONNE = UnitData(1000.0, "tonne")
+
+class EnergyCategory(UnitCategory):
+    J = UnitData(1.0, "J")
+    kJ = UnitData(1e3, "kJ")
+    mJ = UnitData(1e-3, "mJ")
+    MJ = UnitData(1e6, "MJ")
+    E6_BtuIT = UnitData(1e6 * 1055.05585262, "1E6 Btu[IT]")
+    BtuIT = UnitData(1055.05585262, "Btu[IT]")
+    BtuUK = UnitData(1055.05585262, "Btu[UK]")
+    Btu_th = UnitData(1054.35026445, "Btu[th]")
+    kW_h = UnitData(3.6e6, "kW.h")
+    MW_h = UnitData(3.6e9, "MW.h")
+    GW_h = UnitData(3.6e12, "GW.h")
+    GeV = UnitData(1.602176634e-10, "GeV")
+    MeV = UnitData(1.602176634e-13, "MeV")
+    keV = UnitData(1.602176634e-16, "keV")
+    meV = UnitData(1.602176634e-22, "meV")
+
+class PowerCategory(UnitCategory):
+    W = UnitData(1.0, "W")
+    EW = UnitData(1e18, "EW")
+    GW = UnitData(1e9, "GW")
+    MW = UnitData(1e6, "MW")
+    TW = UnitData(1e12, "TW")
+    cW = UnitData(1e-2, "cW")
+    dW = UnitData(1e-1, "dW")
+    fW = UnitData(1e-15, "fW")
+    hp = UnitData(745.69987158227, "hp")
+    hp_elec = UnitData(746.0, "hp[elec]")
+    hp_hyd = UnitData(745.69987158227, "hp[hyd]")
+    hp_metric = UnitData(735.49875, "hp[metric]")
+    kW = UnitData(1e3, "kW")
+    mW = UnitData(1e-3, "mW")
+    nW = UnitData(1e-9, "nW")
+    pW = UnitData(1e-12, "pW")
+    uW = UnitData(1e-6, "uW")
+    tonRefrig = UnitData(3516.852842, "tonRefrig")
+
+class TimeCategory(UnitCategory):
+    MS = UnitData(0.001, "ms")
+    S = UnitData(1.0, "s")
+    MIN = UnitData(60.0, "min")
+    H = UnitData(3600.0, "h")
+    D = UnitData(86400.0, "d")
+    WK = UnitData(604800.0, "wk")
+    MO = UnitData(2629746.0, "mo")
+    Y = UnitData(31556952.0, "y")
+
+class VelocityCategory(UnitCategory):
+    M_S = UnitData(1.0, "m/s")
+    M_H = UnitData(1.0 / 3600, "m/h")
+    M_D = UnitData(1.0 / 86400, "m/d")
+    FT_S = UnitData(0.3048, "ft/s")
+    FT_H = UnitData(0.3048 / 3600, "ft/h")
+    FT_D = UnitData(0.3048 / 86400, "ft/d")
+    KM_H = UnitData(1000.0 / 3600, "km/h")
+    MI_H = UnitData(1609.344 / 3600, "mi/h")
+    KNOT = UnitData(0.514444, "knot")
+
 class UnitConverter:
     @staticmethod
     def convert_unit(from_unit: UnitData, to_unit: UnitData, value: float | Iterable[float]) -> float | np.ndarray:

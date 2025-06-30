@@ -159,7 +159,7 @@ class VolumeRationsUnitCategory(UnitCategory):
 
 class UnitConverter:
     @staticmethod
-    def convert_unit(from_unit: UnitData, to_unit: UnitData, value: [float | Iterable[float]]) -> [float | np.ndarray]:
+    def convert_unit(from_unit: UnitData, to_unit: UnitData, value: float | Iterable[float]) -> float | np.ndarray:
         """
         Convert from one unit to another within a specified category.
 
@@ -184,8 +184,7 @@ class UnitConverter:
         return value * (from_unit.factor / to_unit.factor)
 
 
-def output_result(from_unit: UnitData, to_unit: UnitData, values: [float | Iterable[float]],
-                  result: [float | np.ndarray]) -> None:
+def output_result(from_unit: UnitData, to_unit: UnitData, values: float | Iterable[float], result: float | np.ndarray) -> None:
     """
     Outputs the results of unit conversion.
 
@@ -203,7 +202,7 @@ def output_result(from_unit: UnitData, to_unit: UnitData, values: [float | Itera
     """
 
     if isinstance(values, Iterable):
-        for q, r in zip(values, result):
-            print(f"{q} {from_unit.symbol} = {r} {to_unit.symbol}")
+        for original, converted in zip(values, result):
+            print(f"{original} {from_unit.symbol} = {converted} {to_unit.symbol}")
     else:
         print(f"{values} {from_unit.symbol} = {result} {to_unit.symbol}")

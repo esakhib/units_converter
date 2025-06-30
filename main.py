@@ -1,7 +1,8 @@
 from unit_converter import UnitConverter, PressureUnitCategory, VolumeFlowRateUnitCategory, VolumeRationsUnitCategory, \
     output_result
 
-
+import re,ast
+from collections.abc import Iterable
 def get_categories():
     return list((PressureUnitCategory, VolumeFlowRateUnitCategory, VolumeRationsUnitCategory))
 
@@ -55,8 +56,24 @@ def main():
                 continue
             target_unit = units[to_unit_value - 1]
 
-            user_input = input("Введите количество (или несколько значений через пробел): ")
-            values = list(map(float, user_input.split()))
+            #user_input = input("Введите количество (или несколько значений через пробел или запятую): ")
+            #values = list(map(float, user_input.split()))
+
+            raw = input("Введите количество (или несколько значений, любой Python-литерал или через пробел/запятую): ")
+            s = raw.strip()
+
+            try:
+                literal = ast.literal_eval(s)
+                if isinstance(literal,(int,float)):
+                    values = [float(literal)]
+                elif isinstance(literal,Iterable) and not isinstance(literal,(str,bytes)):
+                    values = [float(x) for x in literal]
+                else:
+                    raise ValueError
+            except(ValueError,SyntaxError):
+                parts = re.split(r"[/s,]+",raw.strip())
+                values = [float(p) for p in parts if p]
+
 
             if not values:
                 print("Введите хотя бы одно значение.")

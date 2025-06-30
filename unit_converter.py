@@ -32,8 +32,9 @@ class UnitCategory:
     """
 
     @classmethod
-    def get_units(cls):
-        return [attr for attr in cls.__dict__.values() if isinstance(attr, UnitData)]
+    def get_units(cls) -> list[UnitData]:
+        #returns all UnitData that were defined in the class
+        return [v for v in vars(cls).values() if isinstance(v, UnitData)]
 
 
 class PressureUnitCategory(UnitCategory):
@@ -156,6 +157,15 @@ class VolumeRationsUnitCategory(UnitCategory):
     STB_SCF = UnitData(5.614583333333334, "stb/scf: stock tank barrel per standard cubic foot")
     STB_MSCF = UnitData(0.005614583333333333, "stb/mscf: stock tank barrel per thousand standard cubic feet")
 
+class CompressibilityCategory(UnitCategory):
+    """
+    Units having the dimension of 1/pressure
+    """
+
+    PER_PSI = UnitData(1.0 / 6894.76, "1/psi")
+    PER_ATM = UnitData(1.0 / 101325, "1/atm")
+    PER_PA = UnitData(1.0, "1/Pa")
+    PER_BAR = UnitData(1.0 / 100000, "1/bar")
 
 class UnitConverter:
     @staticmethod

@@ -1,10 +1,10 @@
-from unit_converter import UnitConverter, PressureUnitCategory, VolumeFlowRateUnitCategory, VolumeRationsUnitCategory, \
+from unit_converter import UnitCategory, UnitConverter, PressureUnitCategory, VolumeFlowRateUnitCategory, VolumeRationsUnitCategory, \
     output_result
 
 import re,ast
 from collections.abc import Iterable
 def get_categories():
-    return list((PressureUnitCategory, VolumeFlowRateUnitCategory, VolumeRationsUnitCategory))
+    return [cls for cls in UnitCategory.__subclasses__() if cls.get_units()]
 
 
 def choose_category(categories_classes):

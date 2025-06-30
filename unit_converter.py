@@ -325,6 +325,98 @@ class VelocityCategory(UnitCategory):
     MI_H = UnitData(1609.344 / 3600, "mi/h")
     KNOT = UnitData(0.514444, "knot")
 
+class TemperatureIntervalCategory(UnitCategory):
+    deltaK = UnitData(1.0, "deltaK")
+    deltaC = UnitData(1.0, "deltaC")
+    deltaF = UnitData(5/9, "deltaF")
+    deltaR = UnitData(5/9, "deltaR")
+
+class ElectricResistanceCategory(UnitCategory):
+    ohm = UnitData(1.0,"ohm")
+    Eohm = UnitData(1e18,"Eohm")
+    Gohm = UnitData(1e9,"Gohm")
+    Mohm = UnitData(1e6,"Mohm")
+    Tohm = UnitData(1e12,"Tohm")
+    cohm = UnitData(1e-2,"cohm")
+    dohm = UnitData(1e-1,"dohm")
+    fohm = UnitData(1e-15,"fohm")
+    kohm = UnitData(1e3,"kohm")
+    mohm = UnitData(1e-3,"mohm")
+    nohm = UnitData(1e-9,"nohm")
+    pohm = UnitData(1e-12,"pohm")
+    uohm = UnitData(1e-6,"uohm")
+
+class ElectricConductance(UnitCategory):
+    S = UnitData(1.0, "S")
+    ES = UnitData(1e18, "ES")
+    GS = UnitData(1e9, "GS")
+    MS = UnitData(1e6, "MS")
+    TS = UnitData(1e12, "TS")
+    cS = UnitData(1e-2, "cS")
+    dS = UnitData(1e-1, "dS")
+    fS = UnitData(1e-15, "fS")
+    kS = UnitData(1e3, "kS")
+    mS = UnitData(1e-3, "mS")
+    nS = UnitData(1e-9, "nS")
+    pS = UnitData(1e-12, "pS")
+    uS = UnitData(1e-6, "uS")
+
+class ElectricCurrentCategory(UnitCategory):
+    A = UnitData(1.0, "A")
+    EA = UnitData(1e18, "EA")
+    GA = UnitData(1e9, "GA")
+    MA = UnitData(1e6, "MA")
+    TA = UnitData(1e12, "TA")
+    cA = UnitData(1e-2, "cA")
+    dA = UnitData(1e-1, "dA")
+    fA = UnitData(1e-15, "fA")
+    kA = UnitData(1e3, "kA")
+    mA = UnitData(1e-3, "mA")
+    nA = UnitData(1e-9, "nA")
+    pA = UnitData(1e-12, "pA")
+    uA = UnitData(1e-6, "uA")
+
+class InductanceCategory(UnitCategory):
+    H = UnitData(1.0, "H")
+    EH = UnitData(1e18, "EH")
+    TH = UnitData(1e12, "TH")
+    GH = UnitData(1e9, "GH")
+    MH = UnitData(1e6, "MH")
+    kH = UnitData(1e3, "kH")
+    dH = UnitData(1e-1, "dH")
+    cH = UnitData(1e-2, "cH")
+    mH = UnitData(1e-3, "mH")
+    uH = UnitData(1e-6, "uH")
+    nH = UnitData(1e-9, "nH")
+    fH = UnitData(1e-15, "fH")
+
+class CapacitanceCategory(UnitCategory):
+    F = UnitData(1.0, "F")
+    EF = UnitData(1e18, "EF")
+    GF = UnitData(1e9, "GF")
+    MF = UnitData(1e6, "MF")
+    TF = UnitData(1e12, "TF")
+    cF = UnitData(1e-2, "cF")
+    dF = UnitData(1e-1, "dF")
+    fF = UnitData(1e-15, "fF")
+    kF = UnitData(1e3, "kF")
+    mF = UnitData(1e-3, "mF")
+    nF = UnitData(1e-9, "nF")
+    pF = UnitData(1e-12, "pF")
+    uF = UnitData(1e-6, "uF")
+
+class AmountOfSubstanceCategory(UnitCategory):
+    mol = UnitData(1.0, "mol")
+    kmol = UnitData(1000.0, "kmol")
+    lbmol = UnitData(453.59237, "lbmol")
+    mmol = UnitData(1e-3, "mmol")
+    umol = UnitData(1e-6, "umol")
+
+class MolecularWeightCategory(UnitCategory):
+    KG_PER_MOL = UnitData(1.0, "kg/mol")
+    G_PER_MOL = UnitData(0.001, "g/mol")
+    LBM_PER_LBMOL = UnitData(0.45359237, "lbm/lbmol")
+
 class UnitConverter:
     @staticmethod
     def convert_unit(from_unit: UnitData, to_unit: UnitData, value: float | Iterable[float]) -> float | np.ndarray:

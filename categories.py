@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-from typing import Iterable
-import numpy as np
+from abc import ABC,abstractmethod
 
 
 @dataclass
@@ -12,17 +11,19 @@ class UnitData:
     ----------
     factor : float
         The conversion factor for the unit relative to the base unit.
-    symbol : str
-        A textual representation of the unit.
+    abbr : str
+        A short textual representation of the unit.
+    name : str
+        Full textual representation of the unit.
 
     """
 
     factor: float
-    symbol: str
+    abbr: str
+    name: str = ""
     offset: float = 0.0
 
-
-class UnitCategory:
+class UnitCategory(ABC):
     """
     A base class for organizing categories of measurement units.
 
@@ -34,9 +35,11 @@ class UnitCategory:
 
     @classmethod
     def get_units(cls) -> list[UnitData]:
-        #returns all UnitData that were defined in the class
+        # returns all UnitData that were defined in the class
         return [v for v in vars(cls).values() if isinstance(v, UnitData)]
-
+    @abstractmethod
+    def __str__(self)->str:
+        ...
 
 class PressureUnitCategory(UnitCategory):
     """
@@ -67,15 +70,17 @@ class PressureUnitCategory(UnitCategory):
 
     """
 
-    PA = UnitData(1, "Pa: pascal")
-    HPA = UnitData(100, "hPa: hectopascal")
-    KPA = UnitData(1000, "kPa: kilopascal")
-    MPA = UnitData(1000000, "MPa: megapascal")
-    AT = UnitData(98066.5, "at: technical atmosphere")
-    ATM = UnitData(101325, "atm: standard atmosphere")
-    BAR = UnitData(100000, "bar: bar")
-    PSI = UnitData(6894.76, "psi: pound-force per square inch")
+    PA = UnitData(1, "Pa","pascal")
+    HPA = UnitData(100, "hPa","hectopascal")
+    KPA = UnitData(1000, "kPa","kilopascal")
+    MPA = UnitData(1000000, "MPa","megapascal")
+    AT = UnitData(98066.5, "at","technical atmosphere")
+    ATM = UnitData(101325, "atm", "standard atmosphere")
+    BAR = UnitData(100000, "bar","bar")
+    PSI = UnitData(6894.76, "psi", "pound-force per square inch")
 
+    def __str__(self):
+        return "Pressure"
 
 class VolumeFlowRateUnitCategory(UnitCategory):
     """
@@ -113,18 +118,21 @@ class VolumeFlowRateUnitCategory(UnitCategory):
 
     """
 
-    BBL_D = UnitData(1, "bbl/d: barrel per day")
-    MBBL_D = UnitData(1000, "mbbl/d: thousand barrels per day")
-    MMBBL_D = UnitData(1000000, "mmbbl/d: million barrels per day")
-    BBL_Y = UnitData(0.00273791, "bbl/y: barrels per year")
-    MBBL_Y = UnitData(2.73791, "mbbl/y: thousand barrels per year")
-    MMBBL_Y = UnitData(2737.91, "mmbbl/y: million barrels per year")
-    M3_D = UnitData(6.28981, "m³/d: cubic meter per day")
-    E3M3_D = UnitData(6289.81, "E3m³/d: thousand cubic meter per day")
-    E6M3_D = UnitData(6289810.77, "E6m³/d: million cubic meter per day")
-    SCF_D = UnitData(0.1781, "scf/d: standard cubic feet per day")
-    MSCF_D = UnitData(178.1, "mscf/d: thousand standard cubic feet per day")
-    MMSCF_D = UnitData(178107.6, "mmscf/d: million standard cubic feet per day")
+    BBL_D = UnitData(1, "bbl/d","barrel per day")
+    MBBL_D = UnitData(1000, "mbbl/d","thousand barrels per day")
+    MMBBL_D = UnitData(1000000, "mmbbl/d","million barrels per day")
+    BBL_Y = UnitData(0.00273791, "bbl/y","barrels per year")
+    MBBL_Y = UnitData(2.73791, "mbbl/y","thousand barrels per year")
+    MMBBL_Y = UnitData(2737.91, "mmbbl/y","million barrels per year")
+    M3_D = UnitData(6.28981, "m³/d","cubic meter per day")
+    E3M3_D = UnitData(6289.81, "E3m³/d","thousand cubic meter per day")
+    E6M3_D = UnitData(6289810.77, "E6m³/d","million cubic meter per day")
+    SCF_D = UnitData(0.1781, "scf/d","standard cubic feet per day")
+    MSCF_D = UnitData(178.1, "mscf/d","thousand standard cubic feet per day")
+    MMSCF_D = UnitData(178107.6, "mmscf/d","million standard cubic feet per day")
+
+    def __str__(self):
+        return "Volume flow rate"
 
 
 class VolumeRationsUnitCategory(UnitCategory):
@@ -151,14 +159,18 @@ class VolumeRationsUnitCategory(UnitCategory):
 
     """
 
-    M3_M3 = UnitData(1, "m³/m³: cubic meter per cubic meter")
-    SM3_SM3 = UnitData(1, "sm³/sm³: standard cubic meter per standard cubic meter")
-    SCF_STB = UnitData(0.17810760667903525, "scf/stb: standard cubic foot per stock tank barrel")
-    MSCF_STB = UnitData(178.10760667903526, "mscf/stb: thousand standard cubic feet per stock tank barrel")
-    STB_SCF = UnitData(5.614583333333334, "stb/scf: stock tank barrel per standard cubic foot")
-    STB_MSCF = UnitData(0.005614583333333333, "stb/mscf: stock tank barrel per thousand standard cubic feet")
+    M3_M3 = UnitData(1, "m³/m³","cubic meter per cubic meter")
+    SM3_SM3 = UnitData(1, "sm³/sm³","standard cubic meter per standard cubic meter")
+    SCF_STB = UnitData(0.17810760667903525, "scf/stb","standard cubic foot per stock tank barrel")
+    MSCF_STB = UnitData(178.10760667903526, "mscf/stb","thousand standard cubic feet per stock tank barrel")
+    STB_SCF = UnitData(5.614583333333334, "stb/scf","stock tank barrel per standard cubic foot")
+    STB_MSCF = UnitData(0.005614583333333333, "stb/mscf","stock tank barrel per thousand standard cubic feet")
 
-class CompressibilityCategory(UnitCategory):
+    def __str__(self):
+        return "Volume rations"
+
+
+class CompressibilityUnitCategory(UnitCategory):
     """
     Units having the dimension of 1/pressure
     """
@@ -168,7 +180,11 @@ class CompressibilityCategory(UnitCategory):
     PER_PA = UnitData(1.0, "1/Pa")
     PER_BAR = UnitData(1.0 / 100000, "1/bar")
 
-class KinematicViscosityCategory(UnitCategory):
+    def __str__(self):
+        return "Compressibility"
+
+
+class KinematicViscosityUnitCategory(UnitCategory):
     """
     Units that describes kinematic viscosity
     """
@@ -177,7 +193,11 @@ class KinematicViscosityCategory(UnitCategory):
     ST = UnitData(1e-4, "St")
     CST = UnitData(1e-6, "cSt")
 
-class DynamicViscosityCategory(UnitCategory):
+    def __str__(self):
+        return "Kinematic viscosity"
+
+
+class DynamicViscosityUnitCategory(UnitCategory):
     """
     Units that describes dynamic viscosity
     """
@@ -185,7 +205,12 @@ class DynamicViscosityCategory(UnitCategory):
     PA_S = UnitData(1.0, "Pa·s")
     P = UnitData(0.1, "P")
     CP = UnitData(0.001, "cP")
-class DensityCategory(UnitCategory):
+
+    def __str__(self):
+        return "Dynamic viscosity"
+
+
+class DensityUnitCategory(UnitCategory):
     """
     Units related to density
     """
@@ -193,7 +218,11 @@ class DensityCategory(UnitCategory):
     G_CM3 = UnitData(1000.0, "g/cm3")
     LBM_FT3 = UnitData(16.018463, "lbm/ft3")
 
-class LengthCategory(UnitCategory):
+    def __str__(self):
+        return "Density"
+
+
+class LengthUnitCategory(UnitCategory):
     """
     Units related to length
     """
@@ -209,7 +238,11 @@ class LengthCategory(UnitCategory):
     mm = UnitData(0.001, "mm")
     yd = UnitData(0.9144, "yd")
 
-class AreaCategory(UnitCategory):
+    def __str__(self):
+        return "Length"
+
+
+class AreaUnitCategory(UnitCategory):
     """
     Units related to area
     """
@@ -226,8 +259,11 @@ class AreaCategory(UnitCategory):
     ACRE = UnitData(4046.8564224, "acre")
     ARE = UnitData(100.0, "are")
 
+    def __str__(self):
+        return "Area"
 
-class ForceCategory(UnitCategory):
+
+class ForceUnitCategory(UnitCategory):
     """
     Units related to force
     """
@@ -235,7 +271,11 @@ class ForceCategory(UnitCategory):
     DYNE = UnitData(1e-5, "dyne")
     LBF = UnitData(4.448221615, "lbf")
 
-class VolumeCategory(UnitCategory):
+    def __str__(self):
+        return "Force"
+
+
+class VolumeUnitCategory(UnitCategory):
     """
     Units related to volume
     """
@@ -262,7 +302,11 @@ class VolumeCategory(UnitCategory):
     GAL = UnitData(0.003_785_411_784, "gal")
     ACRE_FT = UnitData(1_233.481_837_547_52, "acre.ft")
 
-class MassCategory(UnitCategory):
+    def __str__(self):
+        return "Volume"
+
+
+class MassUnitCategory(UnitCategory):
     KG = UnitData(1.0, "kg")
     G = UnitData(0.001, "g")
     MG = UnitData(1e-6, "mg")
@@ -275,7 +319,11 @@ class MassCategory(UnitCategory):
     TON_US = UnitData(907.18474, "ton[US]")
     TONNE = UnitData(1000.0, "tonne")
 
-class EnergyCategory(UnitCategory):
+    def __str__(self):
+        return "Mass"
+
+
+class EnergyUnitCategory(UnitCategory):
     J = UnitData(1.0, "J")
     kJ = UnitData(1e3, "kJ")
     mJ = UnitData(1e-3, "mJ")
@@ -292,7 +340,11 @@ class EnergyCategory(UnitCategory):
     keV = UnitData(1.602176634e-16, "keV")
     meV = UnitData(1.602176634e-22, "meV")
 
-class PowerCategory(UnitCategory):
+    def __str__(self):
+        return "Energy"
+
+
+class PowerUnitCategory(UnitCategory):
     W = UnitData(1.0, "W")
     EW = UnitData(1e18, "EW")
     GW = UnitData(1e9, "GW")
@@ -312,7 +364,10 @@ class PowerCategory(UnitCategory):
     uW = UnitData(1e-6, "uW")
     tonRefrig = UnitData(3516.852842, "tonRefrig")
 
-class TimeCategory(UnitCategory):
+    def __str__(self):
+        return "Power"
+
+class TimeUnitCategory(UnitCategory):
     MS = UnitData(0.001, "ms")
     S = UnitData(1.0, "s")
     MIN = UnitData(60.0, "min")
@@ -322,7 +377,9 @@ class TimeCategory(UnitCategory):
     MO = UnitData(2629746.0, "mo")
     Y = UnitData(31556952.0, "y")
 
-class VelocityCategory(UnitCategory):
+    def __str__(self):
+        return "Time"
+class VelocityUnitCategory(UnitCategory):
     M_S = UnitData(1.0, "m/s")
     M_H = UnitData(1.0 / 3600, "m/h")
     M_D = UnitData(1.0 / 86400, "m/d")
@@ -333,34 +390,46 @@ class VelocityCategory(UnitCategory):
     MI_H = UnitData(1609.344 / 3600, "mi/h")
     KNOT = UnitData(0.514444, "knot")
 
-class TemperatureCategory(UnitCategory):
-    degK = UnitData(factor=1.0, offset=0.0, symbol="degK")
-    degC = UnitData(factor=1.0, offset=273.15, symbol="degC")
-    degF = UnitData(factor=5/9, offset=459.67, symbol="degF")
-    degR = UnitData(factor=5/9, offset=0.0, symbol="degR")
+    def __str__(self):
+        return "Velocity"
 
-class TemperatureIntervalCategory(UnitCategory):
+class TemperatureUnitCategory(UnitCategory):
+    degK = UnitData(factor=1.0, offset=0.0, abbr="degK")
+    degC = UnitData(factor=1.0, offset=273.15, abbr="degC")
+    degF = UnitData(factor=5 / 9, offset=459.67, abbr="degF")
+    degR = UnitData(factor=5 / 9, offset=0.0, abbr="degR")
+
+    def __str__(self):
+        return "Temperature"
+
+
+class TemperatureIntervalUnitCategory(UnitCategory):
     deltaK = UnitData(1.0, "deltaK")
     deltaC = UnitData(1.0, "deltaC")
-    deltaF = UnitData(5/9, "deltaF")
-    deltaR = UnitData(5/9, "deltaR")
+    deltaF = UnitData(5 / 9, "deltaF")
+    deltaR = UnitData(5 / 9, "deltaR")
 
-class ElectricResistanceCategory(UnitCategory):
-    ohm = UnitData(1.0,"ohm")
-    Eohm = UnitData(1e18,"Eohm")
-    Gohm = UnitData(1e9,"Gohm")
-    Mohm = UnitData(1e6,"Mohm")
-    Tohm = UnitData(1e12,"Tohm")
-    cohm = UnitData(1e-2,"cohm")
-    dohm = UnitData(1e-1,"dohm")
-    fohm = UnitData(1e-15,"fohm")
-    kohm = UnitData(1e3,"kohm")
-    mohm = UnitData(1e-3,"mohm")
-    nohm = UnitData(1e-9,"nohm")
-    pohm = UnitData(1e-12,"pohm")
-    uohm = UnitData(1e-6,"uohm")
+    def __str__(self):
+        return "Temperature interval"
 
-class ElectricConductance(UnitCategory):
+class ElectricResistanceUnitCategory(UnitCategory):
+    ohm = UnitData(1.0, "ohm")
+    Eohm = UnitData(1e18, "Eohm")
+    Gohm = UnitData(1e9, "Gohm")
+    Mohm = UnitData(1e6, "Mohm")
+    Tohm = UnitData(1e12, "Tohm")
+    cohm = UnitData(1e-2, "cohm")
+    dohm = UnitData(1e-1, "dohm")
+    fohm = UnitData(1e-15, "fohm")
+    kohm = UnitData(1e3, "kohm")
+    mohm = UnitData(1e-3, "mohm")
+    nohm = UnitData(1e-9, "nohm")
+    pohm = UnitData(1e-12, "pohm")
+    uohm = UnitData(1e-6, "uohm")
+
+    def __str__(self):
+        return "Electric resistance"
+class ElectricConductanceUnitCategory(UnitCategory):
     S = UnitData(1.0, "S")
     ES = UnitData(1e18, "ES")
     GS = UnitData(1e9, "GS")
@@ -375,7 +444,10 @@ class ElectricConductance(UnitCategory):
     pS = UnitData(1e-12, "pS")
     uS = UnitData(1e-6, "uS")
 
-class ElectricCurrentCategory(UnitCategory):
+    def __str__(self):
+        return "Electric conductance"
+
+class ElectricCurrentUnitCategory(UnitCategory):
     A = UnitData(1.0, "A")
     EA = UnitData(1e18, "EA")
     GA = UnitData(1e9, "GA")
@@ -390,7 +462,9 @@ class ElectricCurrentCategory(UnitCategory):
     pA = UnitData(1e-12, "pA")
     uA = UnitData(1e-6, "uA")
 
-class InductanceCategory(UnitCategory):
+    def __str__(self):
+        return "Electric current"
+class InductanceUnitCategory(UnitCategory):
     H = UnitData(1.0, "H")
     EH = UnitData(1e18, "EH")
     TH = UnitData(1e12, "TH")
@@ -404,7 +478,10 @@ class InductanceCategory(UnitCategory):
     nH = UnitData(1e-9, "nH")
     fH = UnitData(1e-15, "fH")
 
-class CapacitanceCategory(UnitCategory):
+    def __str__(self):
+        return "Inductance"
+
+class CapacitanceUnitCategory(UnitCategory):
     F = UnitData(1.0, "F")
     EF = UnitData(1e18, "EF")
     GF = UnitData(1e9, "GF")
@@ -419,69 +496,21 @@ class CapacitanceCategory(UnitCategory):
     pF = UnitData(1e-12, "pF")
     uF = UnitData(1e-6, "uF")
 
-class AmountOfSubstanceCategory(UnitCategory):
+    def __str__(self):
+        return "Capacitance"
+class AmountOfSubstanceUnitCategory(UnitCategory):
     mol = UnitData(1.0, "mol")
     kmol = UnitData(1000.0, "kmol")
     lbmol = UnitData(453.59237, "lbmol")
     mmol = UnitData(1e-3, "mmol")
     umol = UnitData(1e-6, "umol")
 
-class MolecularWeightCategory(UnitCategory):
+    def __str__(self):
+        return "Amount of substance"
+class MolecularWeightUnitCategory(UnitCategory):
     KG_PER_MOL = UnitData(1.0, "kg/mol")
     G_PER_MOL = UnitData(0.001, "g/mol")
     LBM_PER_LBMOL = UnitData(0.45359237, "lbm/lbmol")
 
-class UnitConverter:
-    @staticmethod
-    def convert_unit(from_unit: UnitData, to_unit: UnitData, value: float | Iterable[float]) -> float | np.ndarray:
-        """
-        Convert from one unit to another within a specified category.
-
-        Parameters
-        ----------
-        from_unit : UnitData
-            The source unit.
-        to_unit : UnitData
-            The target unit.
-        value : float | Iterable[float]
-            The value(s) to be converted.
-
-        Returns
-        -------
-        float | np.ndarray
-            The converted value.
-
-        """
-
-        is_seq = isinstance(value, Iterable) and not isinstance(value, (str, bytes))
-        v = np.array(value) if is_seq else value
-
-        if from_unit.offset or to_unit.offset:
-            kelvin = (v+from_unit.offset)*from_unit.factor
-            return kelvin/to_unit.factor -to_unit.offset
-
-        return v*(from_unit.factor/to_unit.factor)
-
-
-def output_result(from_unit: UnitData, to_unit: UnitData, values: float | Iterable[float], result: float | np.ndarray) -> None:
-    """
-    Outputs the results of unit conversion.
-
-    Parameters
-    ----------
-    from_unit : UnitData
-        The unit being converted from.
-    to_unit : UnitData
-        The unit being converted to.
-    values : float | Iterable[float]
-        The original values in the source unit.
-    result : float | np.ndarray
-        The converted values in the target unit.
-
-    """
-
-    if isinstance(values, Iterable):
-        for original, converted in zip(values, result):
-            print(f"{original} {from_unit.symbol} = {converted} {to_unit.symbol}")
-    else:
-        print(f"{values} {from_unit.symbol} = {result} {to_unit.symbol}")
+    def __str__(self):
+        return "Molecular weight"

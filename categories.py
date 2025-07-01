@@ -1,5 +1,5 @@
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from abc import ABC,abstractmethod
 
 
 @dataclass
@@ -15,6 +15,8 @@ class UnitData:
         A short textual representation of the unit.
     name : str
         Full textual representation of the unit.
+    offset : float
+        Shift in scales
 
     """
 
@@ -22,6 +24,7 @@ class UnitData:
     abbr: str
     name: str = ""
     offset: float = 0.0
+
 
 class UnitCategory(ABC):
     """
@@ -37,9 +40,11 @@ class UnitCategory(ABC):
     def get_units(cls) -> list[UnitData]:
         # returns all UnitData that were defined in the class
         return [v for v in vars(cls).values() if isinstance(v, UnitData)]
+
     @abstractmethod
-    def __str__(self)->str:
+    def __str__(self) -> str:
         ...
+
 
 class PressureUnitCategory(UnitCategory):
     """
@@ -70,17 +75,18 @@ class PressureUnitCategory(UnitCategory):
 
     """
 
-    PA = UnitData(1, "Pa","pascal")
-    HPA = UnitData(100, "hPa","hectopascal")
-    KPA = UnitData(1000, "kPa","kilopascal")
-    MPA = UnitData(1000000, "MPa","megapascal")
-    AT = UnitData(98066.5, "at","technical atmosphere")
+    PA = UnitData(1, "Pa", "pascal")
+    HPA = UnitData(100, "hPa", "hectopascal")
+    KPA = UnitData(1000, "kPa", "kilopascal")
+    MPA = UnitData(1000000, "MPa", "megapascal")
+    AT = UnitData(98066.5, "at", "technical atmosphere")
     ATM = UnitData(101325, "atm", "standard atmosphere")
-    BAR = UnitData(100000, "bar","bar")
+    BAR = UnitData(100000, "bar", "bar")
     PSI = UnitData(6894.76, "psi", "pound-force per square inch")
 
     def __str__(self):
         return "Pressure"
+
 
 class VolumeFlowRateUnitCategory(UnitCategory):
     """
@@ -118,18 +124,18 @@ class VolumeFlowRateUnitCategory(UnitCategory):
 
     """
 
-    BBL_D = UnitData(1, "bbl/d","barrel per day")
-    MBBL_D = UnitData(1000, "mbbl/d","thousand barrels per day")
-    MMBBL_D = UnitData(1000000, "mmbbl/d","million barrels per day")
-    BBL_Y = UnitData(0.00273791, "bbl/y","barrels per year")
-    MBBL_Y = UnitData(2.73791, "mbbl/y","thousand barrels per year")
-    MMBBL_Y = UnitData(2737.91, "mmbbl/y","million barrels per year")
-    M3_D = UnitData(6.28981, "m³/d","cubic meter per day")
-    E3M3_D = UnitData(6289.81, "E3m³/d","thousand cubic meter per day")
-    E6M3_D = UnitData(6289810.77, "E6m³/d","million cubic meter per day")
-    SCF_D = UnitData(0.1781, "scf/d","standard cubic feet per day")
-    MSCF_D = UnitData(178.1, "mscf/d","thousand standard cubic feet per day")
-    MMSCF_D = UnitData(178107.6, "mmscf/d","million standard cubic feet per day")
+    BBL_D = UnitData(1, "bbl/d", "barrel per day")
+    MBBL_D = UnitData(1000, "mbbl/d", "thousand barrels per day")
+    MMBBL_D = UnitData(1000000, "mmbbl/d", "million barrels per day")
+    BBL_Y = UnitData(0.00273791, "bbl/y", "barrels per year")
+    MBBL_Y = UnitData(2.73791, "mbbl/y", "thousand barrels per year")
+    MMBBL_Y = UnitData(2737.91, "mmbbl/y", "million barrels per year")
+    M3_D = UnitData(6.28981, "m³/d", "cubic meter per day")
+    E3M3_D = UnitData(6289.81, "E3m³/d", "thousand cubic meter per day")
+    E6M3_D = UnitData(6289810.77, "E6m³/d", "million cubic meter per day")
+    SCF_D = UnitData(0.1781, "scf/d", "standard cubic feet per day")
+    MSCF_D = UnitData(178.1, "mscf/d", "thousand standard cubic feet per day")
+    MMSCF_D = UnitData(178107.6, "mmscf/d", "million standard cubic feet per day")
 
     def __str__(self):
         return "Volume flow rate"
@@ -159,12 +165,12 @@ class VolumeRationsUnitCategory(UnitCategory):
 
     """
 
-    M3_M3 = UnitData(1, "m³/m³","cubic meter per cubic meter")
-    SM3_SM3 = UnitData(1, "sm³/sm³","standard cubic meter per standard cubic meter")
-    SCF_STB = UnitData(0.17810760667903525, "scf/stb","standard cubic foot per stock tank barrel")
-    MSCF_STB = UnitData(178.10760667903526, "mscf/stb","thousand standard cubic feet per stock tank barrel")
-    STB_SCF = UnitData(5.614583333333334, "stb/scf","stock tank barrel per standard cubic foot")
-    STB_MSCF = UnitData(0.005614583333333333, "stb/mscf","stock tank barrel per thousand standard cubic feet")
+    M3_M3 = UnitData(1, "m³/m³", "cubic meter per cubic meter")
+    SM3_SM3 = UnitData(1, "sm³/sm³", "standard cubic meter per standard cubic meter")
+    SCF_STB = UnitData(0.17810760667903525, "scf/stb", "standard cubic foot per stock tank barrel")
+    MSCF_STB = UnitData(178.10760667903526, "mscf/stb", "thousand standard cubic feet per stock tank barrel")
+    STB_SCF = UnitData(5.614583333333334, "stb/scf", "stock tank barrel per standard cubic foot")
+    STB_MSCF = UnitData(0.005614583333333333, "stb/mscf", "stock tank barrel per thousand standard cubic feet")
 
     def __str__(self):
         return "Volume rations"
@@ -367,6 +373,7 @@ class PowerUnitCategory(UnitCategory):
     def __str__(self):
         return "Power"
 
+
 class TimeUnitCategory(UnitCategory):
     MS = UnitData(0.001, "ms")
     S = UnitData(1.0, "s")
@@ -379,6 +386,8 @@ class TimeUnitCategory(UnitCategory):
 
     def __str__(self):
         return "Time"
+
+
 class VelocityUnitCategory(UnitCategory):
     M_S = UnitData(1.0, "m/s")
     M_H = UnitData(1.0 / 3600, "m/h")
@@ -392,6 +401,7 @@ class VelocityUnitCategory(UnitCategory):
 
     def __str__(self):
         return "Velocity"
+
 
 class TemperatureUnitCategory(UnitCategory):
     degK = UnitData(factor=1.0, offset=0.0, abbr="degK")
@@ -412,6 +422,7 @@ class TemperatureIntervalUnitCategory(UnitCategory):
     def __str__(self):
         return "Temperature interval"
 
+
 class ElectricResistanceUnitCategory(UnitCategory):
     ohm = UnitData(1.0, "ohm")
     Eohm = UnitData(1e18, "Eohm")
@@ -429,6 +440,8 @@ class ElectricResistanceUnitCategory(UnitCategory):
 
     def __str__(self):
         return "Electric resistance"
+
+
 class ElectricConductanceUnitCategory(UnitCategory):
     S = UnitData(1.0, "S")
     ES = UnitData(1e18, "ES")
@@ -447,6 +460,7 @@ class ElectricConductanceUnitCategory(UnitCategory):
     def __str__(self):
         return "Electric conductance"
 
+
 class ElectricCurrentUnitCategory(UnitCategory):
     A = UnitData(1.0, "A")
     EA = UnitData(1e18, "EA")
@@ -464,6 +478,8 @@ class ElectricCurrentUnitCategory(UnitCategory):
 
     def __str__(self):
         return "Electric current"
+
+
 class InductanceUnitCategory(UnitCategory):
     H = UnitData(1.0, "H")
     EH = UnitData(1e18, "EH")
@@ -480,6 +496,7 @@ class InductanceUnitCategory(UnitCategory):
 
     def __str__(self):
         return "Inductance"
+
 
 class CapacitanceUnitCategory(UnitCategory):
     F = UnitData(1.0, "F")
@@ -498,6 +515,8 @@ class CapacitanceUnitCategory(UnitCategory):
 
     def __str__(self):
         return "Capacitance"
+
+
 class AmountOfSubstanceUnitCategory(UnitCategory):
     mol = UnitData(1.0, "mol")
     kmol = UnitData(1000.0, "kmol")
@@ -507,6 +526,8 @@ class AmountOfSubstanceUnitCategory(UnitCategory):
 
     def __str__(self):
         return "Amount of substance"
+
+
 class MolecularWeightUnitCategory(UnitCategory):
     KG_PER_MOL = UnitData(1.0, "kg/mol")
     G_PER_MOL = UnitData(0.001, "g/mol")

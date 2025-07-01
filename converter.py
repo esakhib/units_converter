@@ -1,5 +1,7 @@
 from collections.abc import Iterable
+
 import numpy as np
+
 from categories import UnitData
 
 
@@ -28,7 +30,7 @@ class UnitConverter:
         is_seq = isinstance(value, Iterable) and not isinstance(value, (str, bytes))
         v = np.array(value) if is_seq else value
 
-        #this part only for temepreature
+        # this part only for temperature
         if from_unit.offset or to_unit.offset:
             conv_base = (v + from_unit.offset) * from_unit.factor
             return conv_base / to_unit.factor - to_unit.offset

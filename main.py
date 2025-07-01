@@ -1,7 +1,11 @@
+import ast
+import re
+from collections.abc import Iterable
+
 from categories import UnitCategory
 from converter import UnitConverter, output_result
-import re,ast
-from collections.abc import Iterable
+
+
 def get_categories():
     return [cls for cls in UnitCategory.__subclasses__() if cls.get_units()]
 
@@ -64,21 +68,21 @@ def main():
                     continue
                 target_unit = units[to_unit_value - 1]
 
-                raw = input("Введите количество (или несколько значений, любой Python-литерал или через пробел/запятую): ")
+                raw = input(
+                    "Введите количество (или несколько значений, любой Python-литерал или через пробел/запятую): ")
                 s = raw.strip()
 
                 try:
                     literal = ast.literal_eval(s)
-                    if isinstance(literal,(int,float)):
+                    if isinstance(literal, (int, float)):
                         values = [float(literal)]
-                    elif isinstance(literal,Iterable) and not isinstance(literal,(str,bytes)):
+                    elif isinstance(literal, Iterable) and not isinstance(literal, (str, bytes)):
                         values = [float(x) for x in literal]
                     else:
                         raise ValueError
-                except(ValueError,SyntaxError):
-                    parts = re.split(r"[/s,]+",raw.strip())
+                except(ValueError, SyntaxError):
+                    parts = re.split(r"[/s,]+", raw.strip())
                     values = [float(p) for p in parts if p]
-
 
                 if not values:
                     print("Введите хотя бы одно значение.")

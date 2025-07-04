@@ -3,6 +3,14 @@ import sys
 
 from functions import Units, function_tree
 
+#TODO: numpy docstring + разделить на файлы
+
+stop_words = ["stop","break","exit","-"]
+back_words = ["back", "return", "prev"]
+
+def out(input: str):
+    if input in stop_words:
+        sys.exit(0)
 
 def input_args(func):
     sig = inspect.signature(func)
@@ -16,9 +24,8 @@ def input_args(func):
         prompt += "): "
 
         while True:
-            raw = input(prompt).strip()
-            if raw.lower() == "stop":
-                sys.exit(0)
+            raw = input(prompt).strip().lower()
+            out(raw)
             try:
                 args[name] = float(raw)
                 break
@@ -48,9 +55,8 @@ def navigate(node, path=None):
             print(f"  {i}. {key}")
 
         choice = input("Выберите пункт: ").strip().lower()
-        if choice == "stop":
-            if not path:
-                sys.exit(0)
+        out(choice)
+        if choice in back_words:
             return
 
         try:

@@ -3,7 +3,7 @@ import sys
 
 from functions import Units, function_tree
 
-#TODO: numpy docstring + разделить на файлы
+#TODO: разделить на файлы
 
 stop_words = ["stop","break","exit","-"]
 back_words = ["back", "return", "prev"]

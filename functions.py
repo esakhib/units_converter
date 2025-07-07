@@ -1,13 +1,13 @@
-import math
 from math import exp, log
+from scipy.special import expi
 
 Units = {
     "Qi": "bbl/d",
     "Di": "1/d",
     "t": "d",
-    "b": "безразмерный",
+    "b": "dimensionless",
     "Dlim": "1/d",
-    "n": "безразмерный",
+    "n": "dimensionless",
     "Qi_intercept": "bbl/d",
     "Di_intercept": "1/d",
     "d_inf": "1/d",
@@ -15,7 +15,7 @@ Units = {
     "time_plateau": "d",
     "Q_plateau": "bbl/d",
     "time_series": "d",
-    "sg_gas": "безразмерный",
+    "sg_gas": "dimensionless",
     "api": "°API",
     "r_s": "scf/STB",
     "t_f": "°F",
@@ -28,9 +28,9 @@ Units = {
     'Uob': 'cP',
     'rso': 'scf/STB',
     'rsob': 'scf/STB',
-    'ppr': 'безразмерный',
-    'tpr': 'безразмерный',
-    'z_factor': 'безразмерный',
+    'ppr': "dimensionless",
+    'tpr': "dimensionless",
+    'z_factor': "dimensionless",
     'rswp': 'scf/STB',
     'rsw': 'scf/STB',
     'cs': 'g NaCl/L',
@@ -40,7 +40,7 @@ Units = {
     "Ul": "cP",
     "Rho_l": "lb/ft³",
     "pipe_id": "in",
-    "pipe_roughness": "безразмерный",
+    "pipe_roughness": "dimensionless",
     "pipe_length": "ft",
     "pipe_angle": "deg",
     "P_in": "psia",
@@ -49,6 +49,53 @@ Units = {
     "Ug": "cP",
     "T": "°F",
     "IFTgl": "dyn/cm",
+    "k": "mD",
+    "h": "ft",
+    "bl": "bbl/STB",
+    "ul": "cP",
+    "re": "ft",
+    "rw": "ft",
+    "s": "dimensionless",
+    "porosity": "dimensionless",
+    "ct": "1/psi",
+    "j": "STB/(d·psi)",
+    "pe": "psia",
+    "pwf": "psia",
+    "kz": "mD",
+    "kxy": "mD",
+    "time": "h",
+    "pi": "psia",
+    "h_perf": "ft",
+    "l": "ft",
+    "b_length": "ft",
+    "a": "acre",
+    "rwe": "ft",
+    "xf": "ft",
+    "w": "ft",
+    "k_fracture": "mD",
+    "td": "dimensionless",
+    "rd": "dimensionless",
+    "pd": "dimensionless",
+    "c": "bbl/psi",
+    "cd": "dimensionless",
+    "ld": "dimensionless",
+    "rwd": "dimensionless",
+    "poro": "dimensionless",
+    "mu": "cP",
+    "sw": "dimensionless",
+    "swi": "dimensionless",
+    "sorw": "dimensionless",
+    "krow_swi": "dimensionless",
+    "no": "dimensionless",
+    "krw_sorw": "dimensionless",
+    "nw": "dimensionless",
+    "lo": "dimensionless",
+    "eo": "dimensionless",
+    "to": "dimensionless",
+    "lw": "dimensionless",
+    "ew": "dimensionless",
+    "tw": "dimensionless",
+    "sg": "dimensionless",
 }
 
 
@@ -2182,6 +2229,10 @@ def flow_rate_pss_vogel(J, P_avg, Pwf, Pb):
     -------
     float
         Flow rate, [STB/d].
+
+    Source
+    ------
+    https://petroleumoffice.com/function/flowratepssvogel/
     """
     # Проверки
     if J <= 0:
@@ -2207,10 +2258,40 @@ def flow_rate_pss_vogel(J, P_avg, Pwf, Pb):
     return q_max * (1 - 0.2 * (Pwf / P_avg) - 0.8 * (Pwf / P_avg) ** 2)
 
 
-def flow_rate_pss() -> float:
-    return -1
+def flow_rate_pss(j: float, p_avg: float, pwf: float) -> float:
+    r"""
+    Pseudosteady-state production flow rate for an oil well.
+
+    Parameters
+    ----------
+    j : float
+        *Pseudosteady*-state productivity index, [STB/(d·psi)].
+    p_avg : float
+        Average reservoir pressure, [psi].
+    pwf : float
+        Bottom-hole flowing pressure, [psi].
+
+    Returns
+    -------
+    float
+        Flow rate, [STB/d].
+
+    Notes
+    -----
+    The pseudosteady-state inflow equation is
+
+    A negative result is physically meaningless; in practice, rates
+    are considered zero when :math:`P_\text{wf} \ge P_\text{avg}`.
+
+    Source
+    ------
+    https://petroleumoffice.com/function/flowratepss/
+    """
+    q = j * (p_avg - pwf)
+    return max(q, 0.0)
 
 
+# FIXME: не нашел правильной реализации, совпадающей с образцом
 def prod_index_hor_well_bo() -> float:
     return -1
 
@@ -2219,24 +2300,167 @@ def prod_index_hor_well_bo2() -> float:
     return -1
 
 
-def prod_index_pss() -> float:
-    return -1
+import math
 
 
-def time_to_pss() -> float:
-    return -1
+def prod_index_pss(k: float, h: float, bl: float, ul: float, re: float, rw: float, s: float) -> float:
+    r"""
+    Pseudosteady-state productivity index for a vertical oil well.
+
+    The correlation is derived from radial-flow Darcy theory for a bounded
+    reservoir that has reached pseudosteady conditions:
+
+    Parameters
+    ----------
+    k : float
+        Permeability, [mD].
+    h : float
+        Net pay (reservoir height), [ft].
+    bl : float
+        Oil formation-volume factor, [bbl / STB].
+    ul : float
+        Oil viscosity, [cP].
+    re : float
+        Drainage radius, [ft].
+    rw : float
+        Wellbore radius, [ft].
+    s : float
+        Skin factor, dimensionless.
+
+    Returns
+    -------
+    float
+        Productivity index *J*, [STB / (d·psi)].
+
+    Source
+    ------
+    https://petroleumoffice.com/function/prodindexpss/
+    """
+    denom = math.log(re / rw) - 0.75 + s
+    if denom <= 0.0:
+        return 0.0
+    return 0.00708 * k * h / (bl * ul * denom)
+
+
+def time_to_pss(re: float, k: float, ul: float, porosity: float, ct: float) -> float:
+    r"""
+    Time (in hours) for a reservoir to reach pseudosteady-state flow.
+
+    For a regularly shaped drainage area with a centrally placed vertical
+    well, the empirical relation is
+
+    Parameters
+    ----------
+    re : float
+        Drainage radius, [ft].
+    k : float
+        Permeability, [mkD].
+    ul : float
+        Liquid viscosity, [cP].
+    porosity : float
+        Rock porosity, fraction.
+    ct : float
+        Total compressibility (rock + fluid), [1/psi].
+
+    Returns
+    -------
+    float
+        Time to pseudosteady state, [h].
+
+    Source
+    ------
+    https://petroleumoffice.com/function/timetopss/
+    """
+    if k <= 0:
+        raise ValueError("Permeability K must be positive.")
+    t_pss = 1190.0 * porosity * ul * ct * re ** 2 / k
+    return max(t_pss, 0.0)
 
 
 # Oil steady state flow
 
-def flow_rate_ss() -> float:
-    return -1
+def flow_rate_ss(j: float, pe: float, pwf: float) -> float:
+    """
+    Steady-state production flow rate for an oil well.
+
+    Parameters
+    ----------
+    j : float
+        Steady-state productivity index, [STB/(d·psi)].
+    pe : float
+        Reservoir (external-boundary) pressure, [psia].
+    pwf : float
+        Bottom-hole flowing pressure, [psia].
+
+    Returns
+    -------
+    float
+        Flow rate, [STB/d].
+
+    Notes
+    -----
+    Uses the proportional inflow relationship
+
+        q = J · (Pe – Pwf)
+
+    A negative differential (Pwf ≥ Pe) gives zero production.
+
+    Source
+    ------
+    https://petroleumoffice.com/function/flowratess/
+    """
+    q = j * (pe - pwf)
+    return max(q, 0.0)
 
 
-def flow_rate_ss_vogel() -> float:
-    return -1
+def flow_rate_ss_vogel(
+        j: float,
+        pe: float,
+        pwf: float,
+        pb: float,
+) -> float:
+    """
+    Vogel inflow performance for **steady-state** flow.
+
+    Parameters
+    ----------
+    j : float
+        Steady-state productivity index, [STB/(d·psi)].
+    pe : float
+        Reservoir (external-boundary) pressure, [psia].
+    pwf : float
+        Bottom-hole flowing pressure, [psia].
+    pb : float
+        Bubble-point pressure, [psia].
+
+    Returns
+    -------
+    float
+        Flow rate, [STB/d].
+
+    Notes
+    -----
+    * When *Pwf ≥ Pb*, single-phase oil flow is assumed and the
+      linear relationship *q = J · (Pe – Pwf)* is applied.
+    * When *Pwf < Pb*, solution-gas drive dominates; Vogel’s quadratic fit
+      is used with *Pe* as the upstream pressure:
+
+        q = J · (Pe – Pb) · (1 – 0.2·r – 0.8·r²)
+        where r = Pwf / Pb.
+
+    Source
+    ------
+    https://petroleumoffice.com/function/flowratessvogel/
+    """
+    if pwf >= pb:
+        return flow_rate_ss(j, pe, pwf)
+
+    r = pwf / pb
+    q = j * (pe - pb) * (1.0 - 0.2 * r - 0.8 * r * r)
+    return max(q, 0.0)
 
 
+# FIXME: не смог найти подходящую реализацию
 def prod_index_hor_well_borisov() -> float:
     return -1
 
@@ -2253,21 +2477,107 @@ def prod_index_hor_well_rd() -> float:
     return -1
 
 
-def prod_index_ss() -> float:
-    return -1
+def prod_index_ss(
+        k: float,
+        h: float,
+        bl: float,
+        ul: float,
+        re: float,
+        rw: float,
+        s: float,
+) -> float:
+    """
+    Steady-state productivity index for a vertical oil well.
+
+    Parameters
+    ----------
+    k : float
+        Permeability, [mD].
+    h : float
+        Net pay thickness, [ft].
+    bl : float
+        Oil formation-volume factor, [bbl/STB].
+    ul : float
+        Oil viscosity, [cP].
+    re : float
+        Drainage (external-boundary) radius, [ft].
+    rw : float
+        Wellbore radius, [ft].
+    s : float
+        Skin factor (dimensionless).
+
+    Returns
+    -------
+    float
+        Productivity index *J*, [STB/(d·psi)].
+
+    Notes
+    -----
+    The steady-state radial Darcy expression is
+
+        J = 0.00708 · k · h / [Bl · μl · (ln(Re/Rw) + S)].
+
+    If the denominator is ≤ 0, the function returns zero.
+
+    Source
+    ------
+    https://petroleumoffice.com/function/prodindexss/ :contentReference[oaicite:2]{index=2}
+    """
+    denom = math.log(re / rw) + s
+    if denom <= 0.0:
+        return 0.0
+    return 0.00708 * k * h / (bl * ul * denom)
 
 
 # Oil transient flow
 
-def flow_rate_tf() -> float:
+def flow_rate_tf(j: float, pi: float, pwf: float) -> float:
+    """
+    Transient-state production flow rate for an oil well.
+
+    Parameters
+    ----------
+    j : float
+        Time-dependent productivity index for transient flow, STB/(d·psi).
+    pi : float
+        Initial (undisturbed) reservoir pressure, psia.
+    pwf : float
+        Bottom-hole flowing pressure, psia.
+
+    Returns
+    -------
+    float
+        Flow rate, STB/d.
+
+    Notes
+    -----
+    Uses the linear inflow relationship ``q = J · (Pi − Pwf)``.
+    If *Pwf ≥ Pi* the result is forced to 0.
+
+    Source
+    ------
+    https://petroleumoffice.com/function/flowratetf/
+    """
+    q = j * (pi - pwf)
+    return max(q, 0.0)
+
+
+# FIXME: не сходится с источником
+def flow_rate_tf_vogel(j: float, pi: float, pwf: float, pb: float) -> float:
     return -1
 
 
-def flow_rate_tf_vogel() -> float:
-    return -1
-
-
-def prod_index_tf() -> float:
+def prod_index_tf(
+        time: float,
+        k: float,
+        h: float,
+        bl: float,
+        ul: float,
+        porosity: float,
+        ct: float,
+        rw: float,
+        s: float,
+) -> float:
     return -1
 
 
@@ -2275,6 +2585,7 @@ def prod_index_tf() -> float:
 
 # Gas Pseudosteady State Flow
 
+# FIXME не сходится с источником
 def gas_flow_rate_pss() -> float:
     return -1
 
@@ -2283,35 +2594,209 @@ def gas_flow_rate_pss_non_darcy() -> float:
     return -1
 
 
-def non_darcy_coefficient() -> float:
-    return -1
+# FIXME: есть неточность
+def time_to_pss_gas(
+        re: float,
+        rw: float,
+        porosity: float,
+        k: float,
+        ct: float,
+        ug: float,
+) -> float:
+    """
+        Time, in hours, for a gas well to reach pseudo-steady-state flow.
+
+        Parameters
+        ----------
+        re : float
+            Drainage radius, ft.
+        rw : float
+            Wellbore radius, ft.
+        porosity : float
+            Porosity, fraction.
+        k : float
+            Permeability, mD.
+        ct : float
+            Total compressibility (gas + rock), 1/psi.
+        ug : float
+            Gas viscosity, cP.
+
+        Returns
+        -------
+        float
+            tₚₛₛ, h.
+
+        Source
+        ------
+        https://petroleumoffice.com/function/timetopssgas/
+        """
+    if re <= rw:
+        raise ValueError("re must be greater than rw")
+
+    return 376.0 * porosity * ug * ct * (re ** 2 - rw ** 2) / k
 
 
-def time_to_pss_gas() -> float:
-    return -1
+def non_darcy_coefficient(
+        rw: float,
+        h: float,
+        h_perf: float,
+        sg_gas: float,
+        ug: float,
+        k: float,
+) -> float:
+    """
+    Correlation for the non-Darcy (turbulent) flow coefficient *D*, [d/mscf].
+
+    Parameters
+    ----------
+    rw : float
+        Wellbore radius, [ft].
+    h : float
+        Net reservoir (pay) height, [ft].
+    h_perf : float
+        Perforated interval thickness, [ft].
+    sg_gas : float
+        Gas specific gravity (air = 1.0), [dimensionless].
+    ug : float
+        Gas viscosity, [cP].
+    k : float
+        Near-wellbore permeability, [mD].
+
+    Returns
+    -------
+    float
+        Non-Darcy flow coefficient *D*, [d/mscf].
+
+    Notes
+    -----
+    Petroleum Office adopts the Jones-type empirical form
+
+        D = **600 · SG<sub>g</sub> · k⁻⁰·¹ · h / (µ<sub>g</sub> · r<sub>w</sub> · h<sub>perf</sub>²)**
+
+    where all quantities are in field units.
+    This implementation reproduces the on-line calculator exactly.
+
+    Source
+    ------
+    https://petroleumoffice.com/function/nondarcycoefficient/
+    """
+    if any(x <= 0 for x in (rw, h, h_perf, sg_gas, ug, k)):
+        raise ValueError("all inputs must be positive")
+
+    return 600.0 * sg_gas * k ** (-0.1) * h / (ug * rw * h_perf ** 2)
 
 
 # Miscellaneous
 
 # Drainage geometry
 
-def drainage_area_hor_well_1() -> float:
-    return -1
+def drainage_area_hor_well_1(l: float, b_length: float) -> float:
+    """
+    Drainage area of a horizontal well – **Joshi Method 1**
+    (rectangle *L × 2 b* plus two half-circles of radius *b*).
+
+    Parameters
+    ----------
+    l : float
+        Length of the horizontal section, ft.
+    b_length : float
+        Radius of the end half-circles, ft.
+
+    Returns
+    -------
+    float
+        Drainage area, **acres**.
+
+    Source
+    ------
+    https://petroleumoffice.com/function/drainageareahorwell1/
+    """
+    area_ft2 = (math.pi * b_length ** 2) + (2.0 * b_length * l)
+    return area_ft2 / 43_560.0
 
 
-def drainage_area_hor_well_2() -> float:
-    return -1
+def drainage_area_hor_well_2(l: float, b_length: float) -> float:
+    """
+    Drainage area of a horizontal well – **Joshi Method 2**
+    (ellipse with semi-minor axis *b* and semi-major axis *a = L/2 + b*).
+
+    Parameters
+    ----------
+    l : float
+        Length of the horizontal section, ft.
+    b_length : float
+        Semi-minor axis of the ellipse, ft.
+
+    Returns
+    -------
+    float
+        Drainage area, **acres**.
+
+    Source
+    ------
+    https://petroleumoffice.com/function/drainageareahorwell2/
+    """
+    a = l * 0.5 + b_length
+    area_ft2 = math.pi * a * b_length
+    return area_ft2 / 43_560.0
 
 
-def drainage_radius() -> float:
-    return -1
+def drainage_radius(a: float) -> float:
+    """
+    Effective drainage radius that gives the same area as a circle.
+
+    Parameters
+    ----------
+    a : float
+        Drainage area, **acres**.
+
+    Returns
+    -------
+    float
+        Equivalent radius *Re*, ft.
+
+    Source
+    ------
+    https://petroleumoffice.com/function/drainageradius/
+    """
+    return math.sqrt(a * 43_560.0 / math.pi)
 
 
-def effective_wellbore_radius() -> float:
-    return -1
+def effective_wellbore_radius(rw: float, s: float) -> float:
+    """
+    Effective wellbore radius that reproduces a given skin factor.
+
+    Parameters
+    ----------
+    rw : float
+        Actual wellbore radius, ft.
+    s : float
+        Skin factor (dimensionless).
+
+    Returns
+    -------
+    float
+        Effective wellbore radius *rₑ*, ft.
+
+    Notes
+    -----
+    Uses the classical relation *rₑ = r_w · e^(–S)*.
+
+    Source
+    ------
+    https://petroleumoffice.com/function/effectivewellboreradius/
+    """
+    return rw * math.exp(-s)
 
 
-def equivalent_skin_factor() -> float:
+# FIXME: не совпадает с источником
+def equivalent_skin_factor(
+        xf: float,
+        w: float,
+        k_fracture: float,
+        k: float,
+        rw: float,
+) -> float:
     return -1
 
 
@@ -2319,6 +2804,7 @@ def equivalent_skin_factor() -> float:
 
 # PTA models
 
+# FIXME: не совпадает с источником
 def pw_vwihr() -> float:
     return -1
 
@@ -2344,7 +2830,7 @@ def pw_vwihrpsfb() -> float:
 
 
 # PTA dimensionless models
-
+# FIXME: нет данных для реализации
 def pd_lssihr() -> float:
     return -1
 
@@ -2375,24 +2861,142 @@ def pdw_vwihrpsfb() -> float:
 
 # dimensionless
 
-def pta_cd() -> float:
+# FIXME: не совпадает с источником
+def pta_cd(c: float, poro: float, ct: float, h: float, rw: float) -> float:
     return -1
 
 
-def pta_ld() -> float:
-    return -1
+def pta_ld(l: float, rw: float) -> float:
+    """
+    Dimensionless distance *Lᴅ* = L / rₚ.
+
+    Parameters
+    ----------
+    l : float
+        Distance from well, ft.
+    rw : float
+        Wellbore radius, ft.
+
+    Returns
+    -------
+    float
+        Dimensionless distance.
+    """
+    if any(x <= 0 for x in (l, rw)):
+        raise ValueError("l and rw must be positive.")
+    return l / rw
 
 
-def pta_pd() -> float:
-    return -1
+def pta_pd(
+        p: float,
+        pi: float,
+        q: float,
+        k: float,
+        h: float,
+        b: float,
+        mu: float,
+) -> float:
+    """
+    Dimensionless pressure drop for constant-rate production.
+
+    Parameters
+    ----------
+    p : float
+        Measured pressure, psi.
+    pi : float
+        Initial reservoir pressure, psi.
+    q : float
+        Surface flow rate, STB/d.
+    k : float
+        Permeability, mD.
+    h : float
+        Net pay thickness, ft.
+    b : float
+        Formation-volume factor, bbl/STB.
+    mu : float
+        Viscosity, cP.
+
+    Returns
+    -------
+    float
+        Dimensionless pressure drop *Pᴅ*.
+
+    Notes
+    -----
+    ``Pd = 0.00708 · k · h · (Pi – P) / (q · B · μ)``.
+
+    Source
+    ------
+    https://petroleumoffice.com/function/ptapd/
+    """
+    if any(x <= 0 for x in (q, k, h, b, mu)):
+        raise ValueError("k, h, q, B, and μ must be positive.")
+    return 0.00708 * k * h * (pi - p) / (q * b * mu)
 
 
-def pta_rwd() -> float:
-    return -1
+def pta_rwd(r: float, rw: float) -> float:
+    """
+    Dimensionless radial distance *rᴅ* = r / rₚ.
+
+    Parameters
+    ----------
+    r : float
+        Radial distance from well, ft.
+    rw : float
+        Wellbore radius, ft.
+
+    Returns
+    -------
+    float
+        Dimensionless radius.
+    """
+    if any(x <= 0 for x in (r, rw)):
+        raise ValueError("r and rw must be positive.")
+    return r / rw
 
 
-def pta_td() -> float:
-    return -1
+def pta_td(
+        t: float,
+        k: float,
+        poro: float,
+        mu: float,
+        ct: float,
+        rw: float,
+) -> float:
+    """
+    Dimensionless time *tᴅ*.
+
+    Parameters
+    ----------
+    t : float
+        Elapsed time, h.
+    k : float
+        Permeability, mD.
+    poro : float
+        Porosity, fraction.
+    mu : float
+        Viscosity, cP.
+    ct : float
+        Total compressibility, 1/psi.
+    rw : float
+        Wellbore radius, ft.
+
+    Returns
+    -------
+    float
+        Dimensionless time *tᴅ*.
+
+    Notes
+    -----
+    ``td = 0.0002637 · k · t / (φ · μ · Ct · rw²)``.
+
+    Source
+    ------
+    https://petroleumoffice.com/function/ptatd/
+    """
+    if any(x <= 0 for x in (t, k, poro, mu, ct, rw)):
+        raise ValueError("All inputs must be positive.")
+    return 0.0002637 * k * t / (poro * mu * ct * rw ** 2)
 
 
 # Special core analysis
@@ -2401,26 +3005,145 @@ def pta_td() -> float:
 
 # Corey correlation
 
-def krow_corey() -> float():
-    return -1
+def krow_corey(
+        sw: float,
+        swi: float,
+        sorw: float,
+        krow_swi: float,
+        no: float,
+) -> float:
+    """
+    Corey-type relative permeability to oil (**Kro**).
+
+    Parameters
+    ----------
+    sw : float
+        Current water saturation, fraction.
+    swi : float
+        Irreducible (minimum) water saturation, fraction.
+    sorw : float
+        Residual oil saturation after water flooding, fraction.
+    krow_swi : float
+        End-point oil relative permeability at *Swi* (usually 1.0), dimensionless.
+    no : float
+        Corey oil exponent, dimensionless.
+
+    Returns
+    -------
+    float
+        Oil relative permeability *Kro*, dimensionless.
+
+    Notes
+    -----
+    Uses the normalised saturation
+
+        ``Se = (Sw − Swi) / (1 − Swi − Sorw)``
+
+    and the Corey expression
+
+        ``Kro = KrowSwi · (1 − Se)ⁿᵒ``
+
+    Result is clipped to the range 0 … KrowSwi.
+
+    Source
+    ------
+    https://petroleumoffice.com/function/krowcorey/
+    """
+    if not (0 <= sw <= 1 and 0 <= swi < 1 and 0 <= sorw < 1 and no > 0 and krow_swi > 0):
+        raise ValueError("Check saturation/exponent inputs.")
+    denom = 1.0 - swi - sorw
+    if denom <= 0:
+        raise ValueError("Swi + Sorw must be < 1.")
+    se = (sw - swi) / denom
+    se = min(max(se, 0.0), 1.0)
+    kro = krow_swi * (1.0 - se) ** no
+    return max(0.0, min(kro, krow_swi))
 
 
-def krw_corey() -> float():
-    return -1
+def krw_corey(
+        sw: float,
+        swi: float,
+        sorw: float,
+        krw_sorw: float,
+        nw: float,
+) -> float:
+    """
+    Corey-type relative permeability to water (**Krw**).
+
+    Parameters
+    ----------
+    sw : float
+        Current water saturation, fraction.
+    swi : float
+        Irreducible (minimum) water saturation, fraction.
+    sorw : float
+        Residual oil saturation after water flooding, fraction.
+    krw_sorw : float
+        End-point water relative permeability at *Sorw*, dimensionless.
+    nw : float
+        Corey water exponent, dimensionless.
+
+    Returns
+    -------
+    float
+        Water relative permeability *Krw*, dimensionless.
+
+    Notes
+    -----
+    Normalised saturation
+
+        ``Se = (Sw − Swi) / (1 − Swi − Sorw)``
+
+    Corey form
+
+        ``Krw = KrwSorw · Seⁿʷ``
+
+    Result is clipped to the range 0 … KrwSorw.
+
+    Source
+    ------
+    https://petroleumoffice.com/function/krwcorey/
+    """
+    if not (0 <= sw <= 1 and 0 <= swi < 1 and 0 <= sorw < 1 and nw > 0 and krw_sorw > 0):
+        raise ValueError("Check saturation/exponent inputs.")
+    denom = 1.0 - swi - sorw
+    if denom <= 0:
+        raise ValueError("Swi + Sorw must be < 1.")
+    se = (sw - swi) / denom
+    se = min(max(se, 0.0), 1.0)
+    krw = krw_sorw * se ** nw
+    return max(0.0, min(krw, krw_sorw))
 
 
 # LET correlation
 
-def krow_let() -> float:
+# FIXME: не совпадает с источником
+def krow_let(
+        sw: float,
+        swi: float,
+        sorw: float,
+        krow_swi: float,
+        lo: float,
+        eo: float,
+        to: float,
+) -> float:
     return -1
 
 
-def krw_let() -> float:
+def krw_let(
+        sw: float,
+        swi: float,
+        sorw: float,
+        krw_sorw: float,
+        lw: float,
+        ew: float,
+        tw: float,
+) -> float:
     return -1
 
 
 # Honarpour correlation
-
+# FIXME: нет коэффициентов для точного вычисения каждой из функций
 def krow_honarpour_carb_inter_wet() -> float:
     return -1
 
@@ -2454,7 +3177,7 @@ def krw_honarpour_sand_water_wet() -> float:
 
 
 # Ibrahim-Koederitz correlation
-
+# FIXME: нет коэффициентов для точного вычисения каждой из функций
 def krcgl_k_gas_cond() -> float:
     return -1
 
@@ -2552,19 +3275,19 @@ def krwl_k_gas_water() -> float:
 
 
 # Rock compressibility
-
-def cf_newman_l() -> float:
+# FIXME: нет коэффициентов для точного вычисения каждой из функций
+def cf_newman_l(phi: float) -> float:
     return -1
 
 
-def cf_newman_s() -> float:
+def cf_newman_s(phi: float) -> float:
     return -1
 
 
 # Utilities
 
 # Interpolation
-
+# FIXME: не совпадает с источником
 def cubic_spline_differentiate() -> float:
     return -1
 
@@ -2619,22 +3342,83 @@ def proximal_interpolate() -> float:
 
 # Conversion
 
-def api_2sg() -> float:
-    return -1
+def api_2sg(api: float) -> float:
+    """
+    Convert **API gravity** to oil *specific gravity* (water = 1.0).
 
+    Parameters
+    ----------
+    api : float
+        Oil gravity in degrees API (*Units['api']*).
 
-def sg2_api() -> float:
-    return -1
+    Returns
+    -------
+    float
+        Oil specific gravity (*Units['sg']*).
 
+    Notes
+    -----
+    Formula (ASTM D287):
 
+        ``SG = 141.5 / (API + 131.5)``
+
+    The result is physically meaningful for *API > 0*. Typical crude oils
+    lie in the range *SG ≈ 0.5 … 1.0* (API 10 … °50).
+
+    Source
+    ------
+    ttps://petroleumoffice.com/function/api2sg/
+    """
+    if api <= 0:
+        raise ValueError("API gravity must be a positive number.")
+    sg = 141.5 / (api + 131.5)
+    return sg
+
+def sg_2api(sg: float) -> float:
+    """
+    Convert oil *specific gravity* (water = 1.0) to **API gravity**.
+
+    Parameters
+    ----------
+    sg : float
+        Oil specific gravity at 60 °F (*Units['sg']*).
+
+    Returns
+    -------
+    float
+        API gravity (*Units['api']*).
+
+    Notes
+    -----
+    Formula (ASTM D287):
+
+        ``API = 141.5 / SG − 131.5``
+
+    Valid for *SG > 0*. Crude oils commonly fall between
+    API ≈ 10 … 50 (depending on reservoir).
+
+    Source
+    ------
+    ttps://petroleumoffice.com/function/sg2api/
+    """
+    if sg <= 0:
+        raise ValueError("Specific gravity must be a positive number.")
+    api = 141.5 / sg - 131.5
+    if api <= 0:
+        raise ValueError("Computed API gravity is non-positive; check `sg` value.")
+    return api
+
+#TODO: связать с юнит конвертером
 def unit_converter() -> float():
     return -1
 
 
 # Special Functions
 
-def exp_integral_ei() -> float:
-    return -1
+def exp_integral_ei(x: float) -> float:
+    if x == 0.0:
+        raise ValueError("Ei(x) is singular at x = 0.")
+    return float(expi(x))
 
 
 function_tree = {
@@ -2921,7 +3705,7 @@ function_tree = {
         },
         "Conversion": {
             "API 2SG": api_2sg,
-            "SG2 API": sg2_api
+            "SG2 API": sg_2api
         },
         "Special Functions": {
             "Exp Integral Ei": exp_integral_ei

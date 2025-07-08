@@ -1,23 +1,29 @@
 import inspect
 import sys
+from typing import get_type_hints
 
-from functions import Units, function_tree
+from petrocalc.tree_for_functions import function_tree
+from petrocalc.units import Units
 
-#TODO: разделить на файлы
+# TODO: разделить на файлы
 
-stop_words = ["stop","break","exit","-"]
+stop_words = ["stop", "break", "exit", "-"]
 back_words = ["back", "return", "prev"]
+
 
 def out(input: str):
     if input in stop_words:
         sys.exit(0)
 
+
 def input_args(func):
+    hints = get_type_hints(func)
     sig = inspect.signature(func)
     args = dict()
     for name, parameter in sig.parameters.items():
+        ann = hints.get(name, str).__name__
         unit = Units.get(name, "it")
-        prompt = f"Введите {name} ({parameter.annotation.__name__}"
+        prompt = f"Введите {name} ({ann}"
 
         if unit:
             prompt += f", {unit}"

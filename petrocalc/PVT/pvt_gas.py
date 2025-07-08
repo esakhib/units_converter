@@ -75,13 +75,10 @@ def zfactor_dak(ppr: float, tpr: float) -> float:
     tol = 1e-10
     z = -1
     for _ in range(max_iter):
-        z = (
-                1
-                + (A1 + A2 / tpr + A3 / tpr ** 3 + A4 / tpr ** 4 + A5 / tpr ** 5) * rho_r
-                + (A6 + A7 / tpr + A8 / tpr ** 2) * rho_r ** 2
-                - A9 * (A7 / tpr + A8 / tpr ** 2) * rho_r ** 5
-                + A10 * (1 + A11 * rho_r ** 2) * rho_r ** 2 / tpr ** 3 * math.exp(-A11 * rho_r ** 2)
-        )
+        z = 1 + (A1 + A2 / tpr + A3 / tpr ** 3 + A4 / tpr ** 4 + A5 / tpr ** 5) * rho_r + (
+                    A6 + A7 / tpr + A8 / tpr ** 2) * rho_r ** 2 - A9 * (A7 / tpr + A8 / tpr ** 2) * rho_r ** 5 + A10 * (
+                        1 + A11 * rho_r ** 2) * rho_r ** 2 / tpr ** 3 * math.exp(-A11 * rho_r ** 2)
+
         rho_new = 0.27 * ppr / (z * tpr)
         if abs(rho_new - rho_r) < tol:
             return z

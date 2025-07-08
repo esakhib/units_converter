@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import subprocess
+import sys
+
 __all__ = [
     "api_2sg",
     "sg_2api",
@@ -34,7 +37,7 @@ def api_2sg(api: float) -> float:
 
     Source
     ------
-    ttps://petroleumoffice.com/function/api2sg/
+    https://petroleumoffice.com/function/api2sg/
     """
     if api <= 0:
         raise ValueError("API gravity must be a positive number.")
@@ -67,7 +70,7 @@ def sg_2api(sg: float) -> float:
 
     Source
     ------
-    ttps://petroleumoffice.com/function/sg2api/
+    https://petroleumoffice.com/function/sg2api/
     """
     if sg <= 0:
         raise ValueError("Specific gravity must be a positive number.")
@@ -77,6 +80,5 @@ def sg_2api(sg: float) -> float:
     return api
 
 
-# TODO: связать с юнит конвертером
 def unit_converter() -> float():
-    return -1
+    subprocess.run([sys.executable, "main.py"], check=True)

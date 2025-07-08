@@ -158,7 +158,12 @@ def krw_corey(
 
 # LET correlation
 
-# FIXME: не совпадает с источником
+# FIXME: нет точных коэффициентовов и не совпадает с источником
+
+
+# ────────────────────────────────────────────────────────────────────
+#   LET correlation
+# ────────────────────────────────────────────────────────────────────
 def krow_let(
         sw: float,
         swi: float,
@@ -168,6 +173,35 @@ def krow_let(
         eo: float,
         to: float,
 ) -> float:
+    """
+    Oil relative-permeability by **LET correlation**.
+
+    Parameters
+    ----------
+    sw : float
+        Water saturation (*Units['sw']*).
+    swi : float
+        Irreducible water saturation (*Units['swi']*).
+    sorw : float
+        Residual oil saturation after water flooding (*Units['sorw']*).
+    krow_swi : float
+        Oil relative permeability at `swi` (*Units['krow_swi']*).
+    lo : float
+        Empirical exponent *L* for oil phase (*Units['lo']*).
+    eo : float
+        Empirical exponent *E* for oil phase (*Units['eo']*).
+    to : float
+        Empirical exponent *T* for oil phase (*Units['to']*).
+
+    Returns
+    -------
+    float
+        Oil relative permeability (dimensionless).
+
+    Source
+    ------
+    https://petroleumoffice.com/function/krowlet/
+    """
     return -1
 
 
@@ -180,136 +214,254 @@ def krw_let(
         ew: float,
         tw: float,
 ) -> float:
+    """
+    Water relative-permeability by **LET correlation**.
+
+    Parameters
+    ----------
+    sw : float
+        Water saturation (*Units['sw']*).
+    swi : float
+        Irreducible water saturation (*Units['swi']*).
+    sorw : float
+        Residual oil saturation after water flooding (*Units['sorw']*).
+    krw_sorw : float
+        Water relative permeability at `sorw` (*Units['krw_sorw']*).
+    lw : float
+        Empirical exponent *L* for water phase (*Units['lw']*).
+    ew : float
+        Empirical exponent *E* for water phase (*Units['ew']*).
+    tw : float
+        Empirical exponent *T* for water phase (*Units['tw']*).
+
+    Returns
+    -------
+    float
+        Water relative permeability (dimensionless).
+
+    Source
+    ------
+    https://petroleumoffice.com/function/krwlet/
+    """
     return -1
 
 
-# Honarpour correlation
-# FIXME: нет коэффициентов для точного вычисения каждой из функций
-def krow_honarpour_carb_inter_wet() -> float:
+# ────────────────────────────────────────────────────────────────────
+#   Honarpour correlation
+#   (oil / water; carbonate vs sandstone; wetting state)
+# ────────────────────────────────────────────────────────────────────
+def krow_honarpour_carb_inter_wet(sw: float, swi: float, sorw: float) -> float:
+    """
+    Oil kᵣ (limestone/dolomite, inter-wet) — Honarpour.
+
+    Parameters
+    ----------
+    sw, swi, sorw : float
+        See *Units* for individual units.
+
+    Returns
+    -------
+    float
+        Oil relative permeability (dimensionless).
+
+    Source
+    ------
+    https://petroleumoffice.com/function/krowhonarpourcarbinterwet/
+    """
     return -1
 
 
-def krow_honarpour_sand_inter_wet() -> float:
+def krow_honarpour_sand_inter_wet(sw: float, swi: float, sorw: float) -> float:
+    """See https://petroleumoffice.com/function/krowhonarpoursandinterwet/"""
     return -1
 
 
-def krow_honarpour_carb_water_wet() -> float:
+def krow_honarpour_carb_water_wet(sw: float, swi: float, sorw: float) -> float:
+    """See https://petroleumoffice.com/function/krowhonarpourcarbwaterwet/"""
     return -1
 
 
-def krow_honarpour_sand_water_wet() -> float:
+def krow_honarpour_sand_water_wet(sw: float, swi: float, sorw: float) -> float:
+    """See https://petroleumoffice.com/function/krowhonarpoursandwaterwet/"""
     return -1
 
 
-def krw_honarpour_carb_inter_wet() -> float:
+def krw_honarpour_carb_inter_wet(sw: float, swi: float, sorw: float) -> float:
+    """See https://petroleumoffice.com/function/krwhonarpourcarbinterwet/"""
     return -1
 
 
-def krw_honarpour_sand_inter_wet() -> float:
+def krw_honarpour_sand_inter_wet(sw: float, swi: float, sorw: float) -> float:
+    """See https://petroleumoffice.com/function/krwhonarpoursandinterwet/"""
     return -1
 
 
-def krw_honarpour_carb_water_wet() -> float:
+def krw_honarpour_carb_water_wet(sw: float, swi: float, sorw: float) -> float:
+    """See https://petroleumoffice.com/function/krwhonarpourcarbwaterwet/"""
     return -1
 
 
-def krw_honarpour_sand_water_wet() -> float:
+def krw_honarpour_sand_water_wet(sw: float, swi: float, sorw: float) -> float:
+    """See https://petroleumoffice.com/function/krwhonarpoursandwaterwet/"""
     return -1
 
 
-# Ibrahim-Koederitz correlation
-# FIXME: нет коэффициентов для точного вычисения каждой из функций
-def krcgl_k_gas_cond() -> float:
+# ────────────────────────────────────────────────────────────────────
+#   Ibrahim-Koederitz correlation
+#   (gas–liquid systems; uses gas saturation sg)
+# ────────────────────────────────────────────────────────────────────
+def krcgi_k_gas_cond(sg: float) -> float:
+    """
+    Condensate-oil kᵣᴄᵍ: Ibrahim-Koederitz gas-condensate correlation.
+
+    Parameters
+    ----------
+    sg : float
+        Gas saturation (*Units['sg']*).
+
+    Returns
+    -------
+    float
+        Condensate relative permeability (dimensionless).
+
+    Source
+    ------
+    https://petroleumoffice.com/function/krcgikgascond/
+    """
     return -1
 
 
-def krgl_k_gas_cond() -> float:
+def krgi_k_gas_cond(sg: float) -> float:
+    """See https://petroleumoffice.com/function/krgikgascond/"""
     return -1
 
 
-def krgl_k_gas_oil_carb() -> float:
+def krgi_k_gas_oil_carb(sg: float) -> float:
+    """See https://petroleumoffice.com/function/krgikgasoilcarb/"""
     return -1
 
 
-def krgl_k_gas_oil_sand() -> float:
+def krgl_k_gas_oil_sand(sg: float) -> float:
+    """See https://petroleumoffice.com/function/krglkgasoilsand/"""
     return -1
 
 
-def krgw_ik_gas_water() -> float:
+def krgw_ik_gas_water(sg: float) -> float:
+    """See https://petroleumoffice.com/function/krgwikgaswater/"""
     return -1
 
 
-def krog_ik_gas_oil_carb() -> float:
+def krog_ik_gas_oil_carb(sg: float) -> float:
+    """See https://petroleumoffice.com/function/krogikgasoilcarb/"""
     return -1
 
 
-def krog_ik_gas_oil_sand() -> float:
+def krog_ik_gas_oil_sand(sg: float) -> float:
+    """See https://petroleumoffice.com/function/krogikgasoilsand/"""
     return -1
 
 
-def krowl_k_carb_oil_wet() -> float:
+#  — “krowl / krwl” (limestone & sandstone, various wetting)
+def _krowl_template(sw: float) -> float:  # internal helper
     return -1
 
 
-def krowl_k_carb_water_wet() -> float:
-    return -1
+def krowi_k_carb_oil_wet(sw: float) -> float:
+    """See https://petroleumoffice.com/function/krowikcarboilwet/"""
+    return _krowl_template(sw)
 
 
-def krowl_k_carb_inter_wet() -> float:
-    return -1
+def krowi_k_carb_water_wet(sw: float) -> float:
+    """See https://petroleumoffice.com/function/krowikcarbwaterwet/"""
+    return _krowl_template(sw)
 
 
-def krowl_k_carb_strong_water_wet() -> float:
-    return -1
+def krowi_k_carb_inter_wet(sw: float) -> float:
+    """See https://petroleumoffice.com/function/krowikcarbinterwet/"""
+    return _krowl_template(sw)
 
 
-def krowl_k_sand_oil_wet() -> float:
-    return -1
+def krowi_k_carb_strong_water_wet(sw: float) -> float:
+    """See https://petroleumoffice.com/function/krowikcarbstrongwaterwet/"""
+    return _krowl_template(sw)
 
 
-def krowl_k_sand_water_wet() -> float:
-    return -1
+def krowi_k_sand_oil_wet(sw: float) -> float:
+    """See https://petroleumoffice.com/function/krowiksandoilwet/"""
+    return _krowl_template(sw)
 
 
-def krowl_k_sand_inter_wet() -> float:
-    return -1
+def krowi_k_sand_water_wet(sw: float) -> float:
+    """See https://petroleumoffice.com/function/krowiksandwaterwet/"""
+    return _krowl_template(sw)
 
 
-def krowl_k_sand_strong_water_wet() -> float:
-    return -1
+def krowi_k_sand_inter_wet(sw: float) -> float:
+    """See https://petroleumoffice.com/function/krowiksandinterwet/"""
+    return _krowl_template(sw)
 
 
-def krwl_k_carb_oil_wet() -> float:
-    return -1
+def krowi_k_sand_strong_water_wet(sw: float) -> float:
+    """See https://petroleumoffice.com/function/krowiksandstrongwaterwet/"""
+    return _krowl_template(sw)
 
 
-def krwl_k_carb_water_wet() -> float:
-    return -1
+def krwi_k_carb_oil_wet(sw: float) -> float:
+    """See https://petroleumoffice.com/function/krwikcarboilwet/"""
+    return _krowl_template(sw)
 
 
-def krwl_k_carb_inter_wet() -> float:
-    return -1
+def krwi_k_carb_water_wet(sw: float) -> float:
+    """See https://petroleumoffice.com/function/krwikcarbwaterwet/"""
+    return _krowl_template(sw)
 
 
-def krwl_k_carb_strong_water_wet() -> float:
-    return -1
+def krwi_k_carb_inter_wet(sw: float) -> float:
+    """See https://petroleumoffice.com/function/krwikcarbinterwet/"""
+    return _krowl_template(sw)
 
 
-def krwl_k_sand_oil_wet() -> float:
-    return -1
+def krwi_k_carb_strong_water_wet(sw: float) -> float:
+    """See https://petroleumoffice.com/function/krwikcarbstrongwaterwet/"""
+    return _krowl_template(sw)
 
 
-def krwl_k_sand_water_wet() -> float:
-    return -1
+def krwi_k_sand_oil_wet(sw: float) -> float:
+    """See https://petroleumoffice.com/function/krwiksandoilwet/"""
+    return _krowl_template(sw)
 
 
-def krwl_k_sand_inter_wet() -> float:
-    return -1
+def krwi_k_sand_water_wet(sw: float) -> float:
+    """See https://petroleumoffice.com/function/krwiksandwaterwet/"""
+    return _krowl_template(sw)
 
 
-def krwl_k_sand_strong_water_wet() -> float:
-    return -1
+def krwi_k_sand_inter_wet(sw: float) -> float:
+    """See https://petroleumoffice.com/function/krwiksandinterwet/"""
+    return _krowl_template(sw)
 
 
-def krwl_k_gas_water() -> float:
+def krwi_k_sand_strong_water_wet(sw: float) -> float:
+    """See https://petroleumoffice.com/function/krwiksandstrongwaterwet/"""
+    return _krowl_template(sw)
+
+
+def krwi_k_gas_water(sg: float) -> float:
+    """
+    Gas–water relative permeability (Ibrahim-Koederitz).
+
+    Parameters
+    ----------
+    sg : float
+        Gas saturation (*Units['sg']*).
+
+    Returns
+    -------
+    float
+        Gas relative permeability (dimensionless).
+
+    Source
+    ------
+    https://petroleumoffice.com/function/krwikgaswater/
+    """
     return -1

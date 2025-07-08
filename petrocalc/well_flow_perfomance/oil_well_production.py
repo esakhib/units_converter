@@ -102,11 +102,53 @@ def flow_rate_pss(j: float, p_avg: float, pwf: float) -> float:
 
 
 # FIXME: не нашел правильной реализации, совпадающей с образцом
-def prod_index_hor_well_bo() -> float:
+def prod_index_hor_well_bo(
+        k: float,
+        h: float,
+        bl: float,
+        ul: float,
+        re: float,
+        rw: float,
+        s: float,
+) -> float:
+    """
+    Horizontal-well productivity index (BO-1989).
+
+    Parameters
+    ----------
+    k, h, bl, ul, re, rw, s : float
+        See *Units* – permeability (**k**), net-pay thickness (**h**),
+        formation-volume factor (**bl**), viscosity (**ul**),
+        drainage radius (**re**), wellbore radius (**rw**), skin (**s**).
+
+    Returns
+    -------
+    float
+        Productivity index *J* (*STB / d·psi*).
+
+    Source
+    ------
+    https://petroleumoffice.com/function/prodindexhorwellbo/
+    """
     return -1
 
 
-def prod_index_hor_well_bo2() -> float:
+def prod_index_hor_well_bo2(
+        k: float,
+        h: float,
+        bl: float,
+        ul: float,
+        re: float,
+        rw: float,
+        s: float,
+) -> float:
+    """
+    Improved Babu–Odeh correlation (variant 2).
+
+    Source
+    ------
+    https://petroleumoffice.com/function/prodindexhorwellbo2/
+    """
     return -1
 
 
@@ -271,19 +313,79 @@ def flow_rate_ss_vogel(
 
 
 # FIXME: не смог найти подходящую реализацию
-def prod_index_hor_well_borisov() -> float:
+def prod_index_hor_well_borisov(
+        k: float,
+        h: float,
+        bl: float,
+        ul: float,
+        re: float,
+        rw: float,
+        s: float,
+) -> float:
+    """
+    Borisov correlation (1964).
+
+    Source
+    ------
+    https://petroleumoffice.com/function/prodindexhorwellborisov/
+    """
     return -1
 
 
-def prod_index_hor_well_grj() -> float:
+def prod_index_hor_well_grj(
+        k: float,
+        h: float,
+        bl: float,
+        ul: float,
+        re: float,
+        rw: float,
+        s: float,
+) -> float:
+    """
+    Giger–Ramey–Joshi (GRJ) correlation.
+
+    Source
+    ------
+    https://petroleumoffice.com/function/prodindexhorwellgrj/
+    """
     return -1
 
 
-def prod_index_hor_well_joshi() -> float:
+def prod_index_hor_well_joshi(
+        k: float,
+        h: float,
+        bl: float,
+        ul: float,
+        re: float,
+        rw: float,
+        s: float,
+) -> float:
+    """
+    Joshi correlation (1988).
+
+    Source
+    ------
+    https://petroleumoffice.com/function/prodindexhorwelljoshi/
+    """
     return -1
 
 
-def prod_index_hor_well_rd() -> float:
+def prod_index_hor_well_rd(
+        k: float,
+        h: float,
+        bl: float,
+        ul: float,
+        re: float,
+        rw: float,
+        s: float,
+) -> float:
+    """
+    Renard–Dupuy (RD) correlation.
+
+    Source
+    ------
+    https://petroleumoffice.com/function/prodindexhorwellrd/
+    """
     return -1
 
 
@@ -373,7 +475,35 @@ def flow_rate_tf(j: float, pi: float, pwf: float) -> float:
 
 
 # FIXME: не сходится с источником
-def flow_rate_tf_vogel(j: float, pi: float, pwf: float, pb: float) -> float:
+def flow_rate_tf_vogel(
+        j: float,
+        pi: float,
+        pwf: float,
+        pb: float,
+) -> float:
+    """
+    Vogel inflow-performance relationship for **transient** flow rate.
+
+    Parameters
+    ----------
+    j : float
+        Productivity index (*Units['j']*).
+    pi : float
+        Initial reservoir pressure (*Units['pi']*).
+    pwf : float
+        Flowing bottom-hole pressure (*Units['pwf']*).
+    pb : float
+        Bubble-point pressure (*Units['pb']*).
+
+    Returns
+    -------
+    float
+        Oil flow rate *q* (*STB/d*).
+
+    Source
+    ------
+    https://petroleumoffice.com/function/flowratetfvogel/
+    """
     return -1
 
 
@@ -388,4 +518,25 @@ def prod_index_tf(
         rw: float,
         s: float,
 ) -> float:
+    """
+    Apparent productivity index during **transient flow**.
+
+    Parameters
+    ----------
+    time : float
+        Elapsed time since start of production (*Units['time']*).
+    k, h, bl, ul, porosity, ct, rw, s : float
+        Standard reservoir / fluid properties
+        (see *Units* – permeability, thickness, FVF, viscosity, porosity,
+        total compressibility, wellbore radius, skin).
+
+    Returns
+    -------
+    float
+        Transient PI, *J<sub>t</sub>* (*STB / d·psi*).
+
+    Source
+    ------
+    https://petroleumoffice.com/function/prodindextf/
+    """
     return -1

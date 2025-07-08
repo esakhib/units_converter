@@ -13,6 +13,31 @@ __all__ = [
 
 # FIXME: не совпадает с источником
 def pta_cd(c: float, poro: float, ct: float, h: float, rw: float) -> float:
+    """
+    Dimensionless wellbore-storage coefficient **Cᴅ**.
+
+    Parameters
+    ----------
+    c : float
+        Wellbore storage coefficient (*Units['c']* = bbl/psi).
+    poro : float
+        Rock porosity (*Units['poro']*), dimensionless.
+    ct : float
+        Total compressibility (*Units['ct']*), 1/psi.
+    h : float
+        Net formation thickness (*Units['h']*), ft.
+    rw : float
+        Wellbore radius (*Units['rw']*), ft.
+
+    Returns
+    -------
+    float
+        Dimensionless coefficient *Cᴅ* (placeholder value −1).
+
+    Source
+    ------
+    https://petroleumoffice.com/function/ptacd/
+    """
     return -1
 
 

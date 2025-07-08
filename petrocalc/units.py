@@ -98,6 +98,21 @@ Units = {
     "y_values": "dimensionless",
     "t1": "d",
     "t2": "d",
+    "p_average": "psia",
+    "prod_data": "STB/d",
+    "ug": "cP",
+    "d": "d/mscf",
+    "skin_factor": "dimensionless",
+    "ld1": "dimensionless",
+    "ld2": "dimensionless",
+    "c1_x_values": "dimensionless",
+    "c1_y_values": "dimensionless",
+    "c2_x_values": "dimensionless",
+    "c2_y_values": "dimensionless",
+    "l1_x_values": "dimensionless",
+    "l1_y_values": "dimensionless",
+    "l2_x_values": "dimensionless",
+    "l2_y_values": "dimensionless",
 }
 
 __all__ = ["Units"]

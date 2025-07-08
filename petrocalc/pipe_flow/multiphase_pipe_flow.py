@@ -13,46 +13,208 @@ __all__ = [
 ]
 
 
-# FIXME: нужно очеь много всего и непонятно где брать
+# FIXME: нужно очень много всего и непонятно где брать
+
 # Multiphase Pipe Flow
 
-# Hagedorn and Brown Correlation
+# ────────────────────── Hagedorn & Brown ──────────────────────
+def pressure_gradient_har_brown(
+        Ql: float,
+        Rho_l: float,
+        Ul: float,
+        Qg: float,
+        Ug: float,
+        sg_gas: float,
+        z_factor: float,
+        IFTgl: float,
+        pipe_id: float,
+        pipe_length: float,
+        pipe_roughness: float,
+        p: float,
+        T: float,
+) -> float:
+    """
+    Vertical pressure gradient by the Hagedorn & Brown correlation, [psi/ft].
 
+    Parameters
+    ----------
+    Ql, Rho_l, Ul, Qg, Ug, sg_gas, z_factor, IFTgl, pipe_id,
+    pipe_length, pipe_roughness, p, T : float
+        См. словарь *Units* — единицы выводятся автоматически.
 
-def pressure_gradient_har_brown() -> float:
+    Returns
+    -------
+    float
+        dP/dL, [psi/ft].
+
+    Source
+    ------
+    https://petroleumoffice.com/function/pressuregradientharbrown/
+    """
     return -1
 
 
-def inlet_pressure_har_brown() -> float:
+def inlet_pressure_har_brown(
+        Ql: float,
+        Rho_l: float,
+        Ul: float,
+        Qg: float,
+        sg_gas: float,
+        IFTgl: float,
+        pipe_id: float,
+        pipe_length: float,
+        pipe_roughness: float,
+        P_out: float,
+        T: float,
+) -> float:
+    """
+    Inlet pressure (Hagedorn & Brown), [psia].
+
+    Other notes — см. стр. выше.
+    """
     return -1
 
 
-def outlet_pressure_har_brown() -> float:
+def outlet_pressure_har_brown(
+        Ql: float,
+        Rho_l: float,
+        Ul: float,
+        Qg: float,
+        sg_gas: float,
+        IFTgl: float,
+        pipe_id: float,
+        pipe_length: float,
+        pipe_roughness: float,
+        P_in: float,
+        T: float,
+) -> float:
+    """
+    Outlet pressure (Hagedorn & Brown), [psia].
+    """
     return -1
 
 
-# Beggs and Brill Correlation
-def pressure_gradient_beggs_brill() -> float:
+# ────────────────────── Beggs & Brill ──────────────────────
+def pressure_gradient_beggs_brill(
+        Ql: float,
+        Rho_l: float,
+        Ul: float,
+        Qg: float,
+        Ug: float,
+        sg_gas: float,
+        z_factor: float,
+        IFTgl: float,
+        pipe_id: float,
+        pipe_length: float,
+        pipe_roughness: float,
+        pipe_angle: float,
+        p: float,
+        T: float,
+) -> float:
+    """
+    Pressure gradient by Beggs & Brill (any angle), [psi/ft].
+    """
     return -1
 
 
-def inlet_pressure_beggs_brill() -> float:
+def inlet_pressure_beggs_brill(
+        Ql: float,
+        Rho_l: float,
+        Ul: float,
+        Qg: float,
+        sg_gas: float,
+        IFTgl: float,
+        pipe_id: float,
+        pipe_length: float,
+        pipe_roughness: float,
+        pipe_angle: float,
+        P_out: float,
+        T: float,
+) -> float:
+    """
+    Inlet pressure (Beggs & Brill), [psia].
+    """
     return -1
 
 
-def outlet_pressure_beggs_brill() -> float:
+def outlet_pressure_beggs_brill(
+        Ql: float,
+        Rho_l: float,
+        Ul: float,
+        Qg: float,
+        sg_gas: float,
+        IFTgl: float,
+        pipe_id: float,
+        pipe_length: float,
+        pipe_roughness: float,
+        pipe_angle: float,
+        P_in: float,
+        T: float,
+) -> float:
+    """
+    Outlet pressure (Beggs & Brill), [psia].
+    """
     return -1
 
 
-# Gray Correaltion
-
-def pressure_gradient_gray() -> float:
+# ─────────────────────────── Gray ───────────────────────────
+def pressure_gradient_gray(
+        Ql: float,
+        Rho_l: float,
+        Ul: float,
+        Qg: float,
+        Ug: float,
+        sg_gas: float,
+        z_factor: float,
+        IFTgl: float,
+        pipe_id: float,
+        pipe_length: float,
+        pipe_roughness: float,
+        pipe_angle: float,
+        p: float,
+        T: float,
+) -> float:
+    """
+    Pressure gradient by Gray correlation, [psi/ft].
+    """
     return -1
 
 
-def inlet_pressure_gray() -> float:
+def inlet_pressure_gray(
+        Ql: float,
+        Rho_l: float,
+        Ul: float,
+        Qg: float,
+        sg_gas: float,
+        IFTgl: float,
+        pipe_id: float,
+        pipe_length: float,
+        pipe_roughness: float,
+        pipe_angle: float,
+        P_out: float,
+        T: float,
+) -> float:
+    """
+    Inlet pressure (Gray), [psia].
+    """
     return -1
 
 
-def outlet_pressure_gray() -> float:
+def outlet_pressure_gray(
+        Ql: float,
+        Rho_l: float,
+        Ul: float,
+        Qg: float,
+        sg_gas: float,
+        IFTgl: float,
+        pipe_id: float,
+        pipe_length: float,
+        pipe_roughness: float,
+        pipe_angle: float,
+        P_in: float,
+        T: float,
+) -> float:
+    """
+    Outlet pressure (Gray), [psia].
+    """
     return -1

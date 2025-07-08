@@ -13,11 +13,108 @@ __all__ = [
 # Gas Pseudosteady State Flow
 
 # FIXME не сходится с источником
-def gas_flow_rate_pss() -> float:
+def gas_flow_rate_pss(
+        k: float,
+        h: float,
+        pe: float,
+        pwf: float,
+        z_factor: float,
+        Ug: float,
+        re: float,
+        rw: float,
+        s: float,
+        t_r: float,
+) -> float:
+    """
+    Gas well flow-rate for **pseudosteady-state** (PSS) conditions
+    using the **Darcy** approximation.
+
+    Parameters
+    ----------
+    k : float
+        Permeability, mD (*Units['k']*).
+    h : float
+        Reservoir height, ft (*Units['h']*).
+    pe : float
+        Average reservoir pressure, psia (*Units['pe']*).
+    pwf : float
+        Bottom-hole flowing pressure, psia (*Units['pwf']*).
+    z_factor : float
+        Gas compressibility factor *Z* (dimensionless, *Units['z_factor']*).
+    Ug : float
+        Gas viscosity, cP (*Units['Ug']*).
+    re : float
+        Drainage radius, ft (*Units['re']*).
+    rw : float
+        Wellbore radius, ft (*Units['rw']*).
+    s : float
+        Skin factor (dimensionless, *Units['s']*).
+    t_r : float
+        Reservoir temperature, °R (*Units['t_r']*).
+
+    Returns
+    -------
+    float
+        Stabilised gas flow-rate, **mscf / d**.
+
+    Source
+    ------
+    https://petroleumoffice.com/function/gasflowratepss/
+    """
     return -1
 
 
-def gas_flow_rate_pss_non_darcy() -> float:
+def gas_flow_rate_pss_non_darcy(
+        k: float,
+        h: float,
+        pe: float,
+        pwf: float,
+        z_factor: float,
+        Ug: float,
+        re: float,
+        rw: float,
+        s: float,
+        t_r: float,
+        D: float,
+) -> float:
+    """
+    Gas well **stabilised** flow-rate for PSS conditions
+    accounting for **Non-Darcy** flow.
+
+    Parameters
+    ----------
+    k : float
+        Permeability, mD (*Units['k']*).
+    h : float
+        Reservoir height, ft (*Units['h']*).
+    pe : float
+        Average reservoir pressure, psia (*Units['pe']*).
+    pwf : float
+        Bottom-hole flowing pressure, psia (*Units['pwf']*).
+    z_factor : float
+        Gas compressibility factor *Z* (dimensionless, *Units['z_factor']*).
+    Ug : float
+        Gas viscosity, cP (*Units['Ug']*).
+    re : float
+        Drainage radius, ft (*Units['re']*).
+    rw : float
+        Wellbore radius, ft (*Units['rw']*).
+    s : float
+        Skin factor (dimensionless, *Units['s']*).
+    t_r : float
+        Reservoir temperature, °R (*Units['t_r']*).
+    D : float
+        Non-Darcy coefficient, d/mscf (no entry in *Units* catalogue).
+
+    Returns
+    -------
+    float
+        Stabilised gas flow-rate, **mscf / d**.
+
+    Source
+    ------
+    https://petroleumoffice.com/function/gasflowratepssnondarcy/
+    """
     return -1
 
 

@@ -116,10 +116,36 @@ def effective_wellbore_radius(rw: float, s: float) -> float:
 
 # FIXME: не совпадает с источником
 def equivalent_skin_factor(
-        xf: float,
-        w: float,
-        k_fracture: float,
-        k: float,
-        rw: float,
+    xf: float,
+    w: float,
+    k_fracture: float,
+    k: float,
+    rw: float,
 ) -> float:
+    """
+    Equivalent skin factor for a **vertically fractured** well.
+
+    Parameters
+    ----------
+    xf : float
+        Fracture half-length, ft (*Units['xf']*).
+    w : float
+        Fracture width, ft (*Units['w']*).
+    k_fracture : float
+        Fracture permeability, mD (*Units['k_fracture']*).
+    k : float
+        Reservoir permeability, mD (*Units['k']*).
+    rw : float
+        Wellbore radius, ft (*Units['rw']*).
+
+    Returns
+    -------
+    float
+        Equivalent skin factor (dimensionless).
+
+    Source
+    ------
+    https://petroleumoffice.com/function/equivalentskinfactor/
+    """
     return -1
+

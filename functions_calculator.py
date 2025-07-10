@@ -5,8 +5,6 @@ from typing import get_type_hints
 from petrocalc.tree_for_functions import function_tree
 from petrocalc.units import Units
 
-# TODO: разделить на файлы
-
 stop_words = ["stop", "break", "exit", "-"]
 back_words = ["back", "return", "prev"]
 

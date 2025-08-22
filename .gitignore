@@ -54,6 +54,9 @@ functions.py
 .idea/
 
 
+.idea/
+
+
 # Translations
 *.mo
 *.pot
